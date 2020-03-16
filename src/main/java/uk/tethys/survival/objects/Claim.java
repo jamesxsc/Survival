@@ -4,11 +4,14 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import uk.tethys.survival.util.SerializableLocation;
 
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
-public class Claim {
+public class Claim implements Serializable {
+
+    private static long serialVersionUID = 00001L;
 
     private Set<Flag> flags;
     private UUID owner;
@@ -24,12 +27,14 @@ public class Claim {
 
     public enum Flag {
 
+        KILLFLAG(Boolean.class)
         ;
 
-        private final Object value;
+        @SuppressWarnings({"FieldCanBeLocal", "rawtypes"})
+        private final Class type;
 
-        < T > Flag(T value) {
-            this.value = value;
+        < T > Flag(Class<T> type) {
+            this.type = type;
         }
 
         public static final Set<Flag> DEFAULT_FLAGSET = new HashSet<>();
