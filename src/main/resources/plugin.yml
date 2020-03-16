@@ -1,0 +1,9 @@
+name: Survival
+version: ${project.version}
+main: uk.tethys.survival.Survival
+
+commands:
+  claim:
+    description: Claim land
+  shop:
+    description: Buy items
