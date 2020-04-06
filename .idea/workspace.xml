@@ -24,31 +24,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="4ef5f5c2-ccfe-4fcd-80b0-241753096a4f" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/Survival.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/dataSources.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/sqldialects.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/uiDesigner.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/uk/tethys/survival/Constants.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/uk/tethys/survival/ShopTest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/uk/tethys/survival/commands/CreateShopCommand.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/uk/tethys/survival/core/SQLManager.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/uk/tethys/survival/listeners/CentralShopListener.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/uk/tethys/survival/listeners/CreateShopListener.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/uk/tethys/survival/managers/ShopManager.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/uk/tethys/survival/objects/Shop.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/uk/tethys/survival/tasks/CreateShopDisplayTask.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/uk/tethys/survival/util/Pair.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/craftbukkit-1.15.2.jar" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/mysql.sql" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/shop.yml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/uk/tethys/survival/Survival.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/uk/tethys/survival/Survival.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/uk/tethys/survival/listeners/ClaimListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/uk/tethys/survival/listeners/ClaimListener.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/uk/tethys/survival/managers/ClaimManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/uk/tethys/survival/managers/ClaimManager.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/uk/tethys/survival/objects/Claim.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/uk/tethys/survival/objects/Claim.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/uk/tethys/survival/util/SerializableLocation.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/uk/tethys/survival/util/SerializableLocation.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/plugin.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/plugin.yml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -88,13 +65,6 @@
         <item name="schemas" type="d4e8921:DatabaseStructure$FamilyGroup" />
         <item name="survival: schema" type="76f4a085:MysqlImplModel$Schema" />
         <item name="claims: table" type="285a2a93:MysqlImplModel$Table" />
-      </path>
-      <path>
-        <item name="Database" type="3277223f:DatabaseStructure$DbRootGroup" />
-        <item name="10.0.1.230" type="feb32156:DbDataSourceImpl" />
-        <item name="schemas" type="d4e8921:DatabaseStructure$FamilyGroup" />
-        <item name="survival: schema" type="76f4a085:MysqlImplModel$Schema" />
-        <item name="new_table: table" type="285a2a93:MysqlImplModel$Table" />
       </path>
     </expand>
     <select />
@@ -182,7 +152,7 @@
       <workItem from="1585334800074" duration="25768000" />
       <workItem from="1585735730953" duration="621000" />
       <workItem from="1585855201923" duration="100000" />
-      <workItem from="1586106584481" duration="24479000" />
+      <workItem from="1586106584481" duration="31360000" />
     </task>
     <servers />
   </component>
@@ -208,30 +178,34 @@
     </state>
     <state x="906" y="681" key="FileChooserDialogImpl/0.0.2400.1880/-1920.1047.1920.1040@0.0.2400.1880" timestamp="1585855297707" />
     <state x="906" y="681" key="FileChooserDialogImpl/0.0.2400.1880/-1920.1074.1920.1040@0.0.2400.1880" timestamp="1586115514055" />
-    <state width="1176" height="309" key="GridCell.Tab.0.bottom" timestamp="1586170939572">
+    <state width="1176" height="309" key="GridCell.Tab.0.bottom" timestamp="1586189023076">
       <screen x="0" y="0" width="2400" height="1880" />
     </state>
     <state width="1176" height="491" key="GridCell.Tab.0.bottom/0.0.2400.1880/-1920.1047.1920.1040@0.0.2400.1880" timestamp="1585735721514" />
-    <state width="1176" height="309" key="GridCell.Tab.0.bottom/0.0.2400.1880/-1920.1074.1920.1040@0.0.2400.1880" timestamp="1586170939572" />
-    <state width="1176" height="309" key="GridCell.Tab.0.center" timestamp="1586170939571">
+    <state width="1176" height="309" key="GridCell.Tab.0.bottom/0.0.2400.1880/-1920.1074.1920.1040@0.0.2400.1880" timestamp="1586189023076" />
+    <state width="1176" height="309" key="GridCell.Tab.0.center" timestamp="1586189023076">
       <screen x="0" y="0" width="2400" height="1880" />
     </state>
     <state width="1176" height="491" key="GridCell.Tab.0.center/0.0.2400.1880/-1920.1047.1920.1040@0.0.2400.1880" timestamp="1585735721514" />
-    <state width="1176" height="309" key="GridCell.Tab.0.center/0.0.2400.1880/-1920.1074.1920.1040@0.0.2400.1880" timestamp="1586170939571" />
-    <state width="1176" height="309" key="GridCell.Tab.0.left" timestamp="1586170939571">
+    <state width="1176" height="309" key="GridCell.Tab.0.center/0.0.2400.1880/-1920.1074.1920.1040@0.0.2400.1880" timestamp="1586189023076" />
+    <state width="1176" height="309" key="GridCell.Tab.0.left" timestamp="1586189023076">
       <screen x="0" y="0" width="2400" height="1880" />
     </state>
     <state width="1176" height="491" key="GridCell.Tab.0.left/0.0.2400.1880/-1920.1047.1920.1040@0.0.2400.1880" timestamp="1585735721514" />
-    <state width="1176" height="309" key="GridCell.Tab.0.left/0.0.2400.1880/-1920.1074.1920.1040@0.0.2400.1880" timestamp="1586170939571" />
-    <state width="1176" height="309" key="GridCell.Tab.0.right" timestamp="1586170939571">
+    <state width="1176" height="309" key="GridCell.Tab.0.left/0.0.2400.1880/-1920.1074.1920.1040@0.0.2400.1880" timestamp="1586189023076" />
+    <state width="1176" height="309" key="GridCell.Tab.0.right" timestamp="1586189023076">
       <screen x="0" y="0" width="2400" height="1880" />
     </state>
     <state width="1176" height="491" key="GridCell.Tab.0.right/0.0.2400.1880/-1920.1047.1920.1040@0.0.2400.1880" timestamp="1585735721514" />
-    <state width="1176" height="309" key="GridCell.Tab.0.right/0.0.2400.1880/-1920.1074.1920.1040@0.0.2400.1880" timestamp="1586170939571" />
+    <state width="1176" height="309" key="GridCell.Tab.0.right/0.0.2400.1880/-1920.1074.1920.1040@0.0.2400.1880" timestamp="1586189023076" />
     <state x="680" y="514" key="SettingsEditor" timestamp="1585481635214">
       <screen x="0" y="0" width="2400" height="1880" />
     </state>
     <state x="680" y="514" key="SettingsEditor/0.0.2400.1880/-1920.1047.1920.1040@0.0.2400.1880" timestamp="1585481635214" />
+    <state x="1089" y="830" width="326" height="234" key="com.intellij.database.actions.DdlActions$DeleteProvider2$1" timestamp="1586181188858">
+      <screen x="0" y="0" width="2400" height="1880" />
+    </state>
+    <state x="1089" y="830" width="326" height="234" key="com.intellij.database.actions.DdlActions$DeleteProvider2$1/0.0.2400.1880/-1920.1074.1920.1040@0.0.2400.1880" timestamp="1586181188858" />
     <state x="895" y="764" key="com.intellij.ide.util.TipDialog" timestamp="1585334800254">
       <screen x="0" y="0" width="2400" height="1880" />
     </state>

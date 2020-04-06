@@ -1,6 +1,7 @@
 package uk.tethys.survival.listeners;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;
@@ -119,35 +120,29 @@ public class ClaimListener implements Listener {
                 }
 
                 for (Claim c : overlapping) {
-//                    Bukkit.broadcastMessage("x1 " + corner1.getBlockX());
-//                    Bukkit.broadcastMessage("z1 " + corner1.getBlockZ());
-//                    Bukkit.broadcastMessage("x2 " + corner2.getBlockX());
-//                    Bukkit.broadcastMessage("z2 " + corner2.getBlockZ());
-//                    player.sendMessage(Bukkit.getPlayer(c.getOwner()).getDisplayName());
-//                    Bukkit.broadcastMessage("neoworld " + corner1.getWorld().getUID().toString());
-                    Bukkit.broadcastMessage("");
-                    Bukkit.broadcastMessage("");
-//                    Bukkit.broadcastMessage("neox1 " + c.getCorner1().getX());
-//                    Bukkit.broadcastMessage("neoz1 " + c.getCorner1().getZ());
-//                    Bukkit.broadcastMessage("neox2 " + c.getCorner2().getX());
-//                    Bukkit.broadcastMessage("neoz2 " + c.getCorner2().getZ());
 
-                    int newmaxx = corner2.getBlockX();
-                    int newmaxz = corner2.getBlockZ();
-                    int newminx = corner1.getBlockX();
-                    int newminz = corner1.getBlockZ();
+                    boolean inz, inx;
+                    if ((c.getCorner2().getX() < corner1.getBlockX() || c.getCorner1().getX() > corner2.getBlockX())) {
+                        Bukkit.broadcastMessage("not in x");
+                        inx = false;
+                    } else {
+                        Bukkit.broadcastMessage("in x span");
+                        inx = true;
+                    }
 
-                    int maxx = (int) c.getCorner2().getX();
-                    int maxz = (int) c.getCorner2().getZ();
-                    int minx = (int) c.getCorner1().getX();
-                    int minz = (int) c.getCorner1().getZ();
+                    //swap smallest to be oldrect
 
+                    if ((c.getCorner2().getZ() < corner1.getBlockZ() || c.getCorner1().getZ() > corner2.getBlockZ())) {
+                        Bukkit.broadcastMessage("not in z");
+                        inz = false;
+                    } else {
+                        Bukkit.broadcastMessage("in z span");
+                        inz = true;
+                    }
 
-                    Bukkit.broadcastMessage(!(minx > newmaxx || newminx > maxx) + "");
-                    Bukkit.broadcastMessage(!(minz > newmaxz ||  newminz > maxz) + "");
+                    if (inz && inx)
+                        player.sendMessage("WOW ITS ALREADY A THING!!!!");
 
-                    Bukkit.broadcastMessage(!(newminx > maxx || minx > newmaxx) + "");
-                    Bukkit.broadcastMessage(!(newminz > maxz ||  minz > newmaxz) + "");
                 }
 
                 plugin.getClaimManager().addClaim(new Claim(player, corner1, corner2));
