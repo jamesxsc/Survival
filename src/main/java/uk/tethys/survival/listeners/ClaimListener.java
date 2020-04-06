@@ -15,10 +15,10 @@ import uk.tethys.survival.Survival;
 import uk.tethys.survival.objects.Claim;
 import uk.tethys.survival.tasks.ClaimTask;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.*;
 
 public class ClaimListener implements Listener {
 
@@ -41,9 +41,12 @@ public class ClaimListener implements Listener {
         Player player = event.getPlayer();
         UUID uuid = player.getUniqueId();
         ItemStack item = event.getItem();
-        if (item != null && item.getItemMeta().getLocalizedName().equals("survival.items.tools.claim")) {
+        if (item != null && item.getItemMeta() != null
+                && item.getItemMeta().getLocalizedName().equals("survival.items.tools.claim")) {
             if (!claimCorners.containsKey(uuid)) {
                 Location corner = event.getClickedBlock().getLocation();
+
+                //todo WORLD CHECKS = CANCELLING!
 
                 claimCorners.put(uuid, corner);
 
@@ -74,14 +77,82 @@ public class ClaimListener implements Listener {
                 // todo add config for this values
                 if (area < 50) {
                     player.sendMessage("Claimed area must be greater than 50 blocks");
-                    return;
+                    //TODO UNCOMMENT THIS FOR TESTING ONLY!!!!
+                   // return;
                 }
 
-                plugin.getClaimManager().getClaims().add(new Claim(player, corner1, corner2));
+                corner1.setX(Math.min(corner1.getX(), corner2.getX()));
+                corner1.setZ(Math.min(corner1.getZ(), corner2.getZ()));
+
+                corner2.setX(Math.max(corner1.getX(), corner2.getX()));
+                corner2.setZ(Math.max(corner1.getZ(), corner2.getZ()));
+
+                //!(x1 > newx2 or newx1 > x2) and !(z1 > newz2 or nez1 > z2)
+                //!(nmin.getX() > max.getX() || nmin.getZ() > max.getZ() ||
+                //                        min.getX() > nmax.getX() || min.getZ() > nmax.getZ()
+
+                Set<Claim> overlapping = new HashSet<>();
+
+                try (Connection connection = plugin.getDBConnection()) {
+                    ResultSet overlappingClaims = connection.prepareStatement(String.format(
+                            "SELECT `owner`, `x1`, `z1`, `x2`, `z2`, `world` FROM claims WHERE `world` = '%s' /*AND " +
+                                    "((NOT (`x1` > %d OR %d > `x2`)) AND (NOT (`z1` > %d or %d > `z2`)))*/",
+                            corner1.getWorld().getUID(), corner2.getBlockX(), corner1.getBlockX(), corner2.getBlockZ(),
+                            corner1.getBlockZ())).executeQuery();
+
+                    while (overlappingClaims.next()) {
+                        overlapping.add(new Claim(UUID.fromString(overlappingClaims.getString("owner")),
+                                new Location(
+                                        Bukkit.getWorld(UUID.fromString(overlappingClaims.getString("world"))),
+                                        overlappingClaims.getInt("x1"), 128,
+                                        overlappingClaims.getInt("z1")
+                                ),
+                                new Location(
+                                        Bukkit.getWorld(UUID.fromString(overlappingClaims.getString("world"))),
+                                        overlappingClaims.getInt("x2"), 128,
+                                        overlappingClaims.getInt("z2")
+                                )));
+                    }
+                } catch (SQLException e) {
+                    plugin.getLogger().severe("Error obtaining overlapping claims from DB");
+                    e.printStackTrace();
+                }
+
+                for (Claim c : overlapping) {
+//                    Bukkit.broadcastMessage("x1 " + corner1.getBlockX());
+//                    Bukkit.broadcastMessage("z1 " + corner1.getBlockZ());
+//                    Bukkit.broadcastMessage("x2 " + corner2.getBlockX());
+//                    Bukkit.broadcastMessage("z2 " + corner2.getBlockZ());
+//                    player.sendMessage(Bukkit.getPlayer(c.getOwner()).getDisplayName());
+//                    Bukkit.broadcastMessage("neoworld " + corner1.getWorld().getUID().toString());
+                    Bukkit.broadcastMessage("");
+                    Bukkit.broadcastMessage("");
+//                    Bukkit.broadcastMessage("neox1 " + c.getCorner1().getX());
+//                    Bukkit.broadcastMessage("neoz1 " + c.getCorner1().getZ());
+//                    Bukkit.broadcastMessage("neox2 " + c.getCorner2().getX());
+//                    Bukkit.broadcastMessage("neoz2 " + c.getCorner2().getZ());
+
+                    int newmaxx = corner2.getBlockX();
+                    int newmaxz = corner2.getBlockZ();
+                    int newminx = corner1.getBlockX();
+                    int newminz = corner1.getBlockZ();
+
+                    int maxx = (int) c.getCorner2().getX();
+                    int maxz = (int) c.getCorner2().getZ();
+                    int minx = (int) c.getCorner1().getX();
+                    int minz = (int) c.getCorner1().getZ();
+
+
+                    Bukkit.broadcastMessage(!(minx > newmaxx || newminx > maxx) + "");
+                    Bukkit.broadcastMessage(!(minz > newmaxz ||  newminz > maxz) + "");
+
+                    Bukkit.broadcastMessage(!(newminx > maxx || minx > newmaxx) + "");
+                    Bukkit.broadcastMessage(!(newminz > maxz ||  minz > newmaxz) + "");
+                }
+
+                plugin.getClaimManager().addClaim(new Claim(player, corner1, corner2));
 
                 player.sendMessage("Claim created successfully!");
-
-                player.sendMessage(plugin.getClaimManager().getClaims().toString());
             }
         }
     }

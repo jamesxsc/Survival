@@ -8,15 +8,15 @@ import java.util.UUID;
 
 public class SerializableLocation implements Serializable {
 
-    private static long serialVersionUID = 00001;
+    private static long serialVersionUID = 2L;
 
-    private int x,
-            y,
-            z;
+    private double  x,
+                    y,
+                    z;
 
     private UUID world;
 
-    public SerializableLocation(int x, int y, int z, UUID world) {
+    public SerializableLocation(double x, double y, double z, UUID world) {
         this.x = x;
         this.y = y;
         this.z = z;
@@ -33,7 +33,23 @@ public class SerializableLocation implements Serializable {
     }
 
     public Location getLocation() {
-        return new Location(Bukkit.getWorld(world), x, y, z);
+        return new Location(Bukkit.getServer().getWorld(world), x, y, z);
+    }
+
+    public double getX() {
+        return x;
+    }
+
+    public double getY() {
+        return y;
+    }
+
+    public double getZ() {
+        return z;
+    }
+
+    public UUID getWorld() {
+        return world;
     }
 
 }

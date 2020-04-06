@@ -23,6 +23,8 @@
                 <directory>${basedir}/src/main/resources/</directory>
                 <includes>
                     <include>plugin.yml</include>
+                    <include>shop.yml</include>
+                    <include>mysql.sql</include>
                 </includes>
             </resource>
         </resources>
@@ -39,10 +41,37 @@
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.2.1</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <relocations>
+                                <relocation>
+                                    <pattern>com.zaxxer.hikari</pattern>
+                                    <shadedPattern>uk.tethys.survival.dependencies.hikari</shadedPattern>
+                                </relocation>
+                            </relocations>
+                            <minimizeJar>true</minimizeJar>
+                            <shadedClassifierName>shaded</shadedClassifierName>
+                            <shadedArtifactAttached>true</shadedArtifactAttached>
+                        </configuration>
+                    </execution>
+                </executions>
+                <configuration>
+                    <createDependencyReducedPom>false</createDependencyReducedPom>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
                 <version>2.6</version>
                 <executions>
-<!--                    copy to dev server -->
+                    <!--                    copy to dev server -->
                     <execution>
                         <id>copy</id>
                         <phase>package</phase>
@@ -56,12 +85,13 @@
                                     <artifactId>${project.artifactId}</artifactId>
                                     <version>${project.version}</version>
                                     <type>jar</type>
+                                    <classifier>shaded</classifier>
                                     <overWrite>true</overWrite>
-                                    <outputDirectory>\\WIN-DQRGN1T4TK9\plugins</outputDirectory>
+                                    <outputDirectory>\\BC-SRV\Prod\Dev\plugins\</outputDirectory>
                                     <destFileName>Survival-DEV-COPY.jar</destFileName>
                                 </artifactItem>
                             </artifactItems>
-                            <outputDirectory>\\WIN-DQRGN1T4TK9\plugins</outputDirectory>
+                            <outputDirectory>\\BC-SRV\Prod\Dev\plugins\</outputDirectory>
                             <overWriteReleases>true</overWriteReleases>
                             <overWriteSnapshots>true</overWriteSnapshots>
                         </configuration>
@@ -84,6 +114,18 @@
             <artifactId>spigot-api</artifactId>
             <version>1.15.2-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.bukkit</groupId>
+            <artifactId>CraftBukkit</artifactId>
+            <version>1.15.2-R0.1-SNAPSHOT</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/src/main/resources/craftbukkit-1.15.2.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>com.zaxxer</groupId>
+            <artifactId>HikariCP</artifactId>
+            <version>3.4.2</version>
         </dependency>
     </dependencies>
 

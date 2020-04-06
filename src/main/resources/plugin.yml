@@ -1,9 +1,12 @@
 name: Survival
 version: ${project.version}
 main: uk.tethys.survival.Survival
+api-version: '1.13'
 
 commands:
   claim:
     description: Claim land
   shop:
     description: Buy items
+  createshop:
+    description: Create shops

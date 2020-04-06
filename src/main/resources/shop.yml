@@ -1,0 +1,7 @@
+categories:
+  valuables:
+    products:
+      diamond:
+        item: minecraft:diamond
+        sell: 200
+        buy: 250
