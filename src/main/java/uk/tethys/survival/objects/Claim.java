@@ -1,6 +1,8 @@
 package uk.tethys.survival.objects;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import uk.tethys.survival.util.SerializableLocation;
 
@@ -49,11 +51,36 @@ public class Claim implements Serializable {
         @SuppressWarnings({"FieldCanBeLocal", "rawtypes"})
         private final Class type;
 
-        < T > Flag(Class<T> type) {
+        <T> Flag(Class<T> type) {
             this.type = type;
         }
 
         public static final Set<Flag> DEFAULT_FLAGSET = new HashSet<>();
+    }
+
+    public boolean overlaps(Claim claim) {
+        return this.overlapsX(claim) && this.overlapsZ(claim);
+    }
+
+    public boolean overlapsX(Claim claim) {
+        SerializableLocation min1 = claim.corner1;
+        SerializableLocation max1 = claim.corner2;
+        SerializableLocation min2 = corner1;
+        SerializableLocation max2 = corner2;
+        return !(min1.getX() > max2.getX() && max1.getX() > min2.getX());
+    }
+
+    public boolean overlapsZ(Claim claim) {
+        SerializableLocation min1 = claim.corner1;
+        SerializableLocation max1 = claim.corner2;
+        SerializableLocation min2 = corner1;
+        SerializableLocation max2 = corner2;
+        return !(min1.getZ() > max2.getZ() && max1.getZ() > min2.getZ());
+    }
+
+    public void tempSetCorners(Material material) {
+        Bukkit.getWorld(this.corner1.getWorld()).getBlockAt(corner1.getLocation()).setType(material);
+        Bukkit.getWorld(this.corner1.getWorld()).getBlockAt(corner2.getLocation()).setType(material);
     }
 
 }
