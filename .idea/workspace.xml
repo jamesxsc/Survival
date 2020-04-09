@@ -25,8 +25,7 @@
   <component name="ChangeListManager">
     <list default="true" id="4ef5f5c2-ccfe-4fcd-80b0-241753096a4f" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/uk/tethys/survival/listeners/ClaimListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/uk/tethys/survival/listeners/ClaimListener.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/uk/tethys/survival/objects/Claim.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/uk/tethys/survival/objects/Claim.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/mysql.sql" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/mysql.sql" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -143,7 +142,7 @@
       <workItem from="1585334800074" duration="25768000" />
       <workItem from="1585735730953" duration="621000" />
       <workItem from="1585855201923" duration="100000" />
-      <workItem from="1586106584481" duration="53767000" />
+      <workItem from="1586106584481" duration="54111000" />
     </task>
     <servers />
   </component>
