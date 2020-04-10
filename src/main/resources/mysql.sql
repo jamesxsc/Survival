@@ -25,7 +25,8 @@ CREATE TABLE IF NOT EXISTS balances (
 
 CREATE TABLE IF NOT EXISTS transactions (
     `payee`     VARCHAR(36)     NOT NULL,
-    `payer`     VARCHAR(36)     NOT NULL,
+    `payer`     VARCHAR(36),
     `amount`    INT             NOT NULL,
+    `desc`      TINYTEXT        NOT NULL,
     PRIMARY KEY (payer, payee)
 ) DEFAULT CHARSET = utf8mb4;

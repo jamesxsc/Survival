@@ -5,10 +5,12 @@ import org.bukkit.plugin.java.JavaPlugin;
 import uk.tethys.survival.commands.ClaimCommand;
 import uk.tethys.survival.commands.CreateShopCommand;
 import uk.tethys.survival.commands.ShopCommand;
+import uk.tethys.survival.commands.internal.DRCLCommand;
 import uk.tethys.survival.core.SQLManager;
 import uk.tethys.survival.listeners.CentralShopListener;
 import uk.tethys.survival.listeners.ClaimListener;
 import uk.tethys.survival.listeners.CreateShopListener;
+import uk.tethys.survival.listeners.EconomyListener;
 import uk.tethys.survival.managers.ClaimManager;
 import uk.tethys.survival.managers.ShopManager;
 
@@ -23,6 +25,12 @@ public class Survival extends JavaPlugin {
     //managers
     private ClaimManager claimManager;
     private ShopManager shopManager;
+
+    private EconomyListener economyListener;
+
+    public EconomyListener getEconomyListener() {
+        return economyListener;
+    }
 
     @Override
     public void onEnable() {
@@ -41,8 +49,13 @@ public class Survival extends JavaPlugin {
         getCommand("claim").setExecutor(new ClaimCommand(this));
         getCommand("shop").setExecutor(new ShopCommand(this));
         getCommand("createshop").setExecutor(new CreateShopCommand(this));
+
+        getCommand("drcl").setExecutor(new DRCLCommand(this));
+
         getServer().getPluginManager().registerEvents(new ClaimListener(this), this);
         getServer().getPluginManager().registerEvents(new CreateShopListener(this), this);
+        economyListener = new EconomyListener(this);
+        getServer().getPluginManager().registerEvents(this.economyListener, this);
 
 
 

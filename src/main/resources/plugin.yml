@@ -1,12 +1,14 @@
-name: Survival
+name: 'Survival'
 version: ${project.version}
-main: uk.tethys.survival.Survival
+main: 'uk.tethys.survival.Survival'
 api-version: '1.13'
 
 commands:
   claim:
-    description: Claim land
+    description: 'Claim land'
   shop:
-    description: Buy items
+    description: 'Buy items'
   createshop:
-    description: Create shops
+    description: 'Create shops'
+  drcl:
+    description: '[internal]'
