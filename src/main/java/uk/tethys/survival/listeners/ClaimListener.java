@@ -1,13 +1,13 @@
 package uk.tethys.survival.listeners;
 
 import org.bukkit.*;
-import org.bukkit.block.Block;
 import org.bukkit.block.Container;
-import org.bukkit.block.ShulkerBox;
+import org.bukkit.block.data.Powerable;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Slime;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
@@ -21,7 +21,6 @@ import org.bukkit.event.vehicle.VehicleDestroyEvent;
 import org.bukkit.event.vehicle.VehicleEnterEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.material.Redstone;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scoreboard.Team;
@@ -213,7 +212,9 @@ public class ClaimListener implements Listener {
     // check for unauthorised breaking of blocks
     @EventHandler
     public void onBreak(BlockBreakEvent event) {
-        event.setCancelled(isDenied(event.getPlayer(), event.getBlock().getLocation(), BlockBreakEvent.class));
+        if (isDenied(event.getPlayer(), event.getBlock().getLocation(), BlockBreakEvent.class)) {
+            event.setCancelled(true);
+        }
     }
 
     // check for unauthorised placing of blocks
@@ -222,85 +223,113 @@ public class ClaimListener implements Listener {
         if (event.getBlock().getType() == Material.SHULKER_BOX) {
             //todo shulker box logic
         } else {
-            event.setCancelled(isDenied(event.getPlayer(), event.getBlockAgainst().getLocation(), BlockPlaceEvent.class));
+            if (isDenied(event.getPlayer(), event.getBlockAgainst().getLocation(), BlockPlaceEvent.class)) {
+                event.setCancelled(true);
+            }
         }
     }
 
     // check for unauthorised container usage
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onOpen(PlayerInteractEvent event) {
-        event.setCancelled(event.getClickedBlock() instanceof Container &&
-                isDenied(event.getPlayer(), event.getClickedBlock().getLocation(), PlayerInteractEvent.class)); // todo do we need to further refine queries of this event to seperate permissions between eg containers and redstone?
+        if (event.getClickedBlock() != null &&
+                event.getClickedBlock().getState() instanceof Container &&
+                isDenied(event.getPlayer(), event.getClickedBlock().getLocation(), PlayerInteractEvent.class)) { // todo do we need to further refine queries of this event to seperate permissions between eg containers and redstone?
+            event.setCancelled(true);
+        }
     }
 
     // check for unauthorised redstone usage
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onRedstoneUse(PlayerInteractEvent event) {
-        event.setCancelled(event.getClickedBlock() instanceof Redstone &&
-                isDenied(event.getPlayer(), event.getClickedBlock().getLocation(), PlayerInteractEvent.class)); // todo why is every impl of redstone deprecated?
+        if (event.getClickedBlock() != null &&
+                event.getClickedBlock().getBlockData() instanceof Powerable &&
+                isDenied(event.getPlayer(), event.getClickedBlock().getLocation(), PlayerInteractEvent.class)) {
+            event.setCancelled(true);
+        }
     }
 
     // prevent unauthorised triggering of raids
     @EventHandler
     public void onBreak(RaidTriggerEvent event) {
-        event.setCancelled(isDenied(event.getPlayer(), event.getRaid().getLocation(), RaidTriggerEvent.class));
+        if (isDenied(event.getPlayer(), event.getRaid().getLocation(), RaidTriggerEvent.class)) {
+            event.setCancelled(true);
+        }
     }
 
     // check for unauthorised vehicle destruction
     @EventHandler
     public void onDestroy(VehicleDestroyEvent event) {
-        event.setCancelled(event.getAttacker() instanceof Player &&
-                isDenied((Player) event.getAttacker(), event.getVehicle().getLocation(), VehicleDestroyEvent.class));
+        if (event.getAttacker() instanceof Player &&
+                isDenied((Player) event.getAttacker(), event.getVehicle().getLocation(), VehicleDestroyEvent.class)) {
+            event.setCancelled(true);
+        }
     }
 
     // check for unauthorised vehicle usage
     @EventHandler
     public void onEnter(VehicleEnterEvent event) {
-        event.setCancelled(event.getEntered() instanceof Player &&
-                isDenied((Player) event.getEntered(), event.getVehicle().getLocation(), VehicleEnterEvent.class));
+        if (event.getEntered() instanceof Player &&
+                isDenied((Player) event.getEntered(), event.getVehicle().getLocation(), VehicleEnterEvent.class)) {
+            event.setCancelled(true);
+        }
     }
 
     // check for unauthorised entity damaging
     @EventHandler
     public void onDamage(EntityDamageByEntityEvent event) {
-        event.setCancelled(event.getDamager() instanceof Player &&
-                isDenied((Player) event.getDamager(), event.getEntity().getLocation(), EntityDamageByEntityEvent.class));
+        if (event.getDamager() instanceof Player &&
+                isDenied((Player) event.getDamager(), event.getEntity().getLocation(), EntityDamageByEntityEvent.class)) {
+            event.setCancelled(true);
+        }
     }
 
     // check for book robbery
     @EventHandler
     public void onTake(PlayerTakeLecternBookEvent event) {
-        event.setCancelled(isDenied(event.getPlayer(), event.getLectern().getLocation(), PlayerTakeLecternBookEvent.class));
+        if (isDenied(event.getPlayer(), event.getLectern().getLocation(), PlayerTakeLecternBookEvent.class)) {
+            event.setCancelled(true);
+        }
     }
 
     // check for unauthorised bed usage
     @EventHandler
     public void onEnter(PlayerBedEnterEvent event) {
-        event.setCancelled(isDenied(event.getPlayer(), event.getBed().getLocation(), PlayerBedEnterEvent.class));
+        if (isDenied(event.getPlayer(), event.getBed().getLocation(), PlayerBedEnterEvent.class)) {
+            event.setCancelled(true);
+        }
     }
 
     // check for fluid robbery
     @EventHandler
     public void onFill(PlayerBucketFillEvent event) {
-        event.setCancelled(isDenied(event.getPlayer(), event.getBlock().getLocation(), PlayerBucketFillEvent.class));
+        if (isDenied(event.getPlayer(), event.getBlock().getLocation(), PlayerBucketFillEvent.class)) {
+            event.setCancelled(true);
+        }
     }
 
     // check for unauthorised entity interactions
     @EventHandler
     public void onInteract(PlayerInteractEntityEvent event) {
-        event.setCancelled(isDenied(event.getPlayer(), event.getRightClicked().getLocation(), PlayerInteractEntityEvent.class));
+        if (isDenied(event.getPlayer(), event.getRightClicked().getLocation(), PlayerInteractEntityEvent.class)) {
+            event.setCancelled(true);
+        }
     }
 
     // check for unauthorised leashing
     @EventHandler
     public void onLeash(PlayerLeashEntityEvent event) {
-        event.setCancelled(isDenied(event.getPlayer(), event.getEntity().getLocation(), PlayerLeashEntityEvent.class));
+        if (isDenied(event.getPlayer(), event.getEntity().getLocation(), PlayerLeashEntityEvent.class)) {
+            event.setCancelled(true);
+        }
     }
 
     // check for unauthorised shearing
     @EventHandler
     public void onShear(PlayerShearEntityEvent event) {
-        event.setCancelled(isDenied(event.getPlayer(), event.getEntity().getLocation(), PlayerShearEntityEvent.class));
+        if (isDenied(event.getPlayer(), event.getEntity().getLocation(), PlayerShearEntityEvent.class)) {
+            event.setCancelled(true);
+        }
     }
 
     // fallback interact catch
@@ -310,7 +339,7 @@ public class ClaimListener implements Listener {
     }
 
     private boolean isDenied(Player player, Location location, Class<? extends Event> eventType) {
-        //todo
+        player.sendMessage(ChatColor.AQUA + "Rejected by system. With EventType of " + eventType.getCanonicalName());
         return true;
     }
 
