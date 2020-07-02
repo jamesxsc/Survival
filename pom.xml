@@ -66,40 +66,50 @@
                     <createDependencyReducedPom>false</createDependencyReducedPom>
                 </configuration>
             </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-dependency-plugin</artifactId>
-                <version>2.6</version>
-                <executions>
-                    <!--                    copy to dev server -->
-                    <execution>
-                        <id>copy</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>copy</goal>
-                        </goals>
-                        <configuration>
-                            <artifactItems>
-                                <artifactItem>
-                                    <groupId>${project.groupId}</groupId>
-                                    <artifactId>${project.artifactId}</artifactId>
-                                    <version>${project.version}</version>
-                                    <type>jar</type>
-                                    <classifier>shaded</classifier>
-                                    <overWrite>true</overWrite>
-                                    <outputDirectory>\\BC-SRV\Prod\Dev\plugins\</outputDirectory>
-                                    <destFileName>Survival-DEV-COPY.jar</destFileName>
-                                </artifactItem>
-                            </artifactItems>
-                            <outputDirectory>\\BC-SRV\Prod\Dev\plugins\</outputDirectory>
-                            <overWriteReleases>true</overWriteReleases>
-                            <overWriteSnapshots>true</overWriteSnapshots>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <profile>
+            <id>copy-to-dev</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-dependency-plugin</artifactId>
+                        <version>2.6</version>
+                        <executions>
+                            <!--                    copy to dev server -->
+                            <execution>
+                                <id>copy</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>copy</goal>
+                                </goals>
+                                <configuration>
+                                    <artifactItems>
+                                        <artifactItem>
+                                            <groupId>${project.groupId}</groupId>
+                                            <artifactId>${project.artifactId}</artifactId>
+                                            <version>${project.version}</version>
+                                            <type>jar</type>
+                                            <classifier>shaded</classifier>
+                                            <overWrite>true</overWrite>
+                                            <outputDirectory>\\BC-SRV\Prod\Dev\plugins\</outputDirectory>
+                                            <destFileName>Survival-DEV-COPY.jar</destFileName>
+                                        </artifactItem>
+                                    </artifactItems>
+                                    <outputDirectory>\\BC-SRV\Prod\Dev\plugins\</outputDirectory>
+                                    <overWriteReleases>true</overWriteReleases>
+                                    <overWriteSnapshots>true</overWriteSnapshots>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 
     <repositories>
         <repository>

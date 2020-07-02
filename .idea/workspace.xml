@@ -25,8 +25,7 @@
   <component name="ChangeListManager">
     <list default="true" id="4ef5f5c2-ccfe-4fcd-80b0-241753096a4f" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/uk/tethys/survival/listeners/ClaimListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/uk/tethys/survival/listeners/ClaimListener.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/mysql.sql" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/mysql.sql" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -99,6 +98,36 @@
       <command value="mvn clean install" />
     </option>
   </component>
+  <component name="RunManager">
+    <configuration name="Survival [clean,package,-P,copy-to-dev]" type="MavenRunConfiguration" factoryName="Maven" nameIsGenerated="true">
+      <MavenSettings>
+        <option name="myGeneralSettings" />
+        <option name="myRunnerSettings" />
+        <option name="myRunnerParameters">
+          <MavenRunnerParameters>
+            <option name="profiles">
+              <set />
+            </option>
+            <option name="goals">
+              <list>
+                <option value="clean" />
+                <option value="package" />
+                <option value="-P" />
+                <option value="copy-to-dev" />
+              </list>
+            </option>
+            <option name="pomFileName" />
+            <option name="profilesMap">
+              <map />
+            </option>
+            <option name="resolveToWorkspace" value="false" />
+            <option name="workingDirPath" value="$PROJECT_DIR$" />
+          </MavenRunnerParameters>
+        </option>
+      </MavenSettings>
+      <method v="2" />
+    </configuration>
+  </component>
   <component name="SvnConfiguration">
     <configuration />
   </component>
@@ -115,7 +144,7 @@
       <workItem from="1585735730953" duration="621000" />
       <workItem from="1585855201923" duration="100000" />
       <workItem from="1586106584481" duration="58130000" />
-      <workItem from="1593701942313" duration="12133000" />
+      <workItem from="1593701942313" duration="13615000" />
     </task>
     <task id="LOCAL-00001" summary="starting on some claim logic and a bit of tidying up">
       <created>1593707019621</created>
@@ -138,7 +167,14 @@
       <option name="project" value="LOCAL" />
       <updated>1593722562001</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="create flags table">
+      <created>1593725368142</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1593725368142</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -148,7 +184,8 @@
     <MESSAGE value="starting on some claim logic and a bit of tidying up" />
     <MESSAGE value="remove copy goal to allow ci builds to succeed" />
     <MESSAGE value="ensure that we never Event#setCancelled(false)" />
-    <option name="LAST_COMMIT_MESSAGE" value="ensure that we never Event#setCancelled(false)" />
+    <MESSAGE value="create flags table" />
+    <option name="LAST_COMMIT_MESSAGE" value="create flags table" />
   </component>
   <component name="WindowStateProjectService">
     <state x="552" y="238" width="816" height="729" key="#Intentions" timestamp="1593722995587">
@@ -159,20 +196,21 @@
       <screen x="0" y="0" width="2400" height="1880" />
     </state>
     <state x="792" y="598" key="#SQL_Dialects/0.0.2400.1880/-1920.1074.1920.1040@0.0.2400.1880" timestamp="1586110996638" />
-    <state x="335" y="592" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1586116622847">
-      <screen x="0" y="0" width="2400" height="1880" />
+    <state x="268" y="365" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1593731241529">
+      <screen x="0" y="0" width="1920" height="1160" />
     </state>
     <state x="335" y="592" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.2400.1880/-1920.1074.1920.1040@0.0.2400.1880" timestamp="1586116622847" />
+    <state x="268" y="365" key="#com.intellij.execution.impl.EditConfigurationsDialog/1920.-339.1200.1880/-1920.337.1920.1040/0.0.1920.1160@0.0.1920.1160" timestamp="1593731241529" />
     <state x="1005" y="656" key="#com.intellij.ide.util.MemberChooser" timestamp="1586479500787">
       <screen x="0" y="0" width="2400" height="1880" />
     </state>
     <state x="1005" y="656" key="#com.intellij.ide.util.MemberChooser/0.0.2400.1880/-1920.1047.1920.1040@0.0.2400.1880" timestamp="1585495909425" />
     <state x="1005" y="656" key="#com.intellij.ide.util.MemberChooser/0.0.2400.1880/-1920.1074.1920.1040@0.0.2400.1880" timestamp="1586117557503" />
     <state x="1005" y="656" key="#com.intellij.ide.util.MemberChooser/0.0.2400.1880/-1920.679.1920.1040@0.0.2400.1880" timestamp="1586479500787" />
-    <state x="585" y="148" key="CommitChangelistDialog2" timestamp="1593722560824">
+    <state x="585" y="148" key="CommitChangelistDialog2" timestamp="1593725367027">
       <screen x="0" y="0" width="1920" height="1160" />
     </state>
-    <state x="585" y="148" key="CommitChangelistDialog2/1920.-339.1200.1880/-1920.337.1920.1040/0.0.1920.1160@0.0.1920.1160" timestamp="1593722560824" />
+    <state x="585" y="148" key="CommitChangelistDialog2/1920.-339.1200.1880/-1920.337.1920.1040/0.0.1920.1160@0.0.1920.1160" timestamp="1593725367027" />
     <state x="906" y="681" key="FileChooserDialogImpl" timestamp="1586115514055">
       <screen x="0" y="0" width="2400" height="1880" />
     </state>
@@ -219,10 +257,10 @@
     </state>
     <state x="680" y="514" key="SettingsEditor/0.0.2400.1880/-1920.1047.1920.1040@0.0.2400.1880" timestamp="1585481635214" />
     <state x="544" y="317" key="SettingsEditor/1920.-339.1200.1880/-1920.337.1920.1040/0.0.1920.1160@0.0.1920.1160" timestamp="1593722143958" />
-    <state x="552" y="313" key="Vcs.Push.Dialog.v2" timestamp="1593722566865">
+    <state x="552" y="313" key="Vcs.Push.Dialog.v2" timestamp="1593725371962">
       <screen x="0" y="0" width="1920" height="1160" />
     </state>
-    <state x="552" y="313" key="Vcs.Push.Dialog.v2/1920.-339.1200.1880/-1920.337.1920.1040/0.0.1920.1160@0.0.1920.1160" timestamp="1593722566865" />
+    <state x="552" y="313" key="Vcs.Push.Dialog.v2/1920.-339.1200.1880/-1920.337.1920.1040/0.0.1920.1160@0.0.1920.1160" timestamp="1593725371962" />
     <state x="1089" y="830" width="326" height="234" key="com.intellij.database.actions.DdlActions$DeleteProvider2$1" timestamp="1586181188858">
       <screen x="0" y="0" width="2400" height="1880" />
     </state>
