@@ -16,6 +16,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import uk.tethys.survival.Survival;
 
 import java.util.Arrays;
+import java.util.Objects;
 
 public class DRCLCommand implements CommandExecutor {
 
@@ -33,13 +34,11 @@ public class DRCLCommand implements CommandExecutor {
         }
         Player player = (Player) commandSender;
         if (plugin.getEconomyListener().getAllowed().contains(player.getUniqueId())) {
-            //todo custom text
             Inventory reward = Bukkit.createInventory(null, InventoryType.DROPPER, "Claim your reward!");
             reward.setContents(getContents());
             player.openInventory(reward);
-            // todo inventory gui slot machine?
         } else {
-            player.sendMessage("You already claimed that today rip");
+            player.sendMessage("You already claimed that today");
             // todo hours until next day?
         }
         return true;
@@ -61,8 +60,7 @@ public class DRCLCommand implements CommandExecutor {
         ItemStack reward1 = new ItemStack(Material.GOLD_NUGGET);
         reward1.addUnsafeEnchantment(Enchantment.DURABILITY, 1);
         ItemMeta meta1 = reward1.getItemMeta();
-        // todo obfuscated ends?
-        meta1.setDisplayName("Level 1 Reward");
+        Objects.requireNonNull(meta1).setDisplayName("Level 1 Reward");
         // todo real currency please
         meta1.setLore(Arrays.asList("$100", "100% Chance"));
         meta1.addItemFlags(ItemFlag.HIDE_ENCHANTS);
@@ -71,16 +69,16 @@ public class DRCLCommand implements CommandExecutor {
         ItemStack reward2 = new ItemStack(Material.GOLD_INGOT);
         reward2.addUnsafeEnchantment(Enchantment.DURABILITY, 1);
         ItemMeta meta2 = reward2.getItemMeta();
-        meta2.setDisplayName("Level 2 Reward");
-        meta2.setLore(Arrays.asList("$1000", "10% Chance"));
+        Objects.requireNonNull(meta2).setDisplayName("Level 2 Reward");
+        meta2.setLore(Arrays.asList("$1000", "30% Chance"));
         meta2.addItemFlags(ItemFlag.HIDE_ENCHANTS);
         reward2.setItemMeta(meta2);
         contents[4] = reward2;
         ItemStack reward3 = new ItemStack(Material.GOLD_BLOCK);
         reward3.addUnsafeEnchantment(Enchantment.DURABILITY, 1);
         ItemMeta meta3 = reward3.getItemMeta();
-        meta3.setDisplayName("Level 3 Reward");
-        meta3.setLore(Arrays.asList("$10000", "1% Chance"));
+        Objects.requireNonNull(meta3).setDisplayName("Level 3 Reward");
+        meta3.setLore(Arrays.asList("$10000", "5% Chance"));
         meta3.addItemFlags(ItemFlag.HIDE_ENCHANTS);
         reward3.setItemMeta(meta3);
         contents[5] = reward3;

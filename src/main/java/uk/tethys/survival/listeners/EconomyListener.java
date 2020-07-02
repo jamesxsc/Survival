@@ -34,8 +34,7 @@ public class EconomyListener implements Listener {
     public void onJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
         Date lastPlayed = new Date(player.getLastPlayed());
-        // TODO UNCOMMENT PREDICATE V
-        //if (!lastPlayed.toInstant().truncatedTo(ChronoUnit.DAYS).equals(new Date().toInstant().truncatedTo(ChronoUnit.DAYS))) {
+        if (!lastPlayed.toInstant().truncatedTo(ChronoUnit.DAYS).equals(new Date().toInstant().truncatedTo(ChronoUnit.DAYS))) {
             allowed.add(player.getUniqueId());
             player.sendMessage("");
             player.spigot().sendMessage(new ComponentBuilder(player.getDisplayName()).color(ChatColor.DARK_AQUA)
@@ -45,7 +44,7 @@ public class EconomyListener implements Listener {
                     .event(new ClickEvent(ClickEvent.Action.RUN_COMMAND,
                             "/survival:drcl " + player.getUniqueId().toString())).create());
             player.sendMessage("");
-        //}
+        }
     }
 
 }
