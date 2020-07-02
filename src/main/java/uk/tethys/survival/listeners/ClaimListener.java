@@ -112,8 +112,7 @@ public class ClaimListener implements Listener {
                 try (Connection connection = plugin.getDBConnection()) {
                     ResultSet overlappingClaims = connection.prepareStatement(String.format(
                             "SELECT `owner`, `x1`, `z1`, `x2`, `z2`, `world` FROM claims WHERE `world` = '%s'",
-                            corner1.getWorld().getUID(), corner2.getBlockX(), corner1.getBlockX(), corner2.getBlockZ(),
-                            corner1.getBlockZ())).executeQuery();
+                            corner1.getWorld().getUID())).executeQuery();
 
                     while (overlappingClaims.next()) {
                         sameWorld.add(new Claim(UUID.fromString(overlappingClaims.getString("owner")),
@@ -339,8 +338,28 @@ public class ClaimListener implements Listener {
     }
 
     private boolean isDenied(Player player, Location location, Class<? extends Event> eventType) {
-        player.sendMessage(ChatColor.AQUA + "Rejected by system. With EventType of " + eventType.getCanonicalName());
-        return true;
+
+        try (Connection connection = plugin.getDBConnection()) {
+            ResultSet overlappingClaim = connection.prepareStatement(String.format(
+                    "SELECT `owner`, `id` FROM claims WHERE `world` = '%s' && ((`x1` <= %d && %d <= `x2`) && (`z1` <= %d && %d <= `z2`)) LIMIT 1",
+                    Objects.requireNonNull(location.getWorld()).getUID().toString(),
+                    location.getBlockX(),
+                    location.getBlockX(),
+                    location.getBlockZ(),
+                    location.getBlockZ()
+            )).executeQuery();
+            boolean inClaim = overlappingClaim.next();
+            if (inClaim)
+                player.sendMessage(ChatColor.AQUA + "Rejected by system. With EventType of " + eventType.getCanonicalName() + ChatColor.LIGHT_PURPLE + " In claim owned by " + overlappingClaim.getString("owner"));
+            return inClaim;
+        } catch (SQLException e) {
+            //todo player feedback
+            plugin.getLogger().severe("Error obtaining overlapping claim from DB");
+            e.printStackTrace();
+            // ensure that if there's an issue we don't allow griefing
+            return true;
+        }
+        //todo flags
     }
 
 }

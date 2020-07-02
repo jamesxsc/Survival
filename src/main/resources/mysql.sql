@@ -11,6 +11,17 @@ CREATE TABLE IF NOT EXISTS claims (
     PRIMARY KEY (id)
 ) DEFAULT CHARSET = utf8mb4;
 
+CREATE TABLE IF NOT EXISTS claim_flags (
+    `claim_id`  FOREIGN KEY         NOT NULL,
+    `flag`      VARCHAR             NOT NULL,
+    `value`     BIT                 NOT NULL,
+    PRIMARY KEY (claim_id, flag),
+    INDEX claim_index (claim_id),
+    FOREIGN KEY (claim_id)
+        REFERENCES claims(id)
+        ON DELETE CASCADE
+) DEFAULT CHARSET = utf8mb4;
+
 CREATE TABLE IF NOT EXISTS unlocked_items (
     `player`    VARCHAR(36)     NOT NULL,
     `item`      VARCHAR(35)     NOT NULL,
