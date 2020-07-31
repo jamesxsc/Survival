@@ -8,11 +8,11 @@ import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryMoveItemEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -77,44 +77,46 @@ public class CreateShopListener implements Listener {
         selector.setItem(4, fill);
         player.openInventory(selector);
     }
+//
+//    @EventHandler(priority = EventPriority.HIGHEST)
+//    public void onInsert(InventoryMoveItemEvent event) {
+//        Player player = (Player) event.getInitiator().getViewers().get(0);
+//        if (!player.getOpenInventory().getTitle().equals(ChatColor.DARK_AQUA + "Insert Item for Shop"))
+//            return;
+//        // todo generify this
+//        if (event.getItem().getItemMeta() != null && event.getItem().getItemMeta().getLocalizedName().equals("survival.internal.fill")) {
+//            event.setCancelled(true);
+//            return;
+//        }
+//        if (event.getDestination().getType().equals(InventoryType.HOPPER)) {
+//
+//            Material shopItem = event.getItem().getType();
+//            Block chest = player.getTargetBlock(null, 5);
+//
+//            String direction = null;
+//            if (((Chest) chest.getState()).getInventory() instanceof DoubleChestInventory) {
+//                Optional<Pair<Block, String>> adj = findAdjacentOfSameType(chest);
+//                if (!adj.isPresent()) {
+//                    throw new IllegalStateException("Chest is double but there is no adjacent chest!");
+//                }
+//                direction = adj.get().getB();
+//            }
+//
+//            Shop shop = new Shop();
+//            shop.setOwner(player.getUniqueId());
+//            shop.setLocation(new SerializableLocation(chest.getLocation()));
+//            shop.setMaterial(shopItem);
+//            shop.setDoubleDirection(direction == null ? Optional.empty() : Optional.of(direction));
+//
+//            event.setCancelled(true);
+//            player.updateInventory();
+//            player.closeInventory();
+//            player.sendMessage(Messages.BUY_PRICE_PROMPT);
+//            awaitingBuyPrice.put(shop.getOwner(), shop);
+//        }
+//    }
 
-    @EventHandler
-    public void onInsert(InventoryMoveItemEvent event) {
-        Player player = (Player) event.getInitiator().getViewers().get(0);
-        if (!player.getOpenInventory().getTitle().equals(ChatColor.DARK_AQUA + "Insert Item for Shop"))
-            return;
-        event.getItem();
-        if (event.getItem().getItemMeta() != null && event.getItem().getItemMeta().getLocalizedName().equals("survival.internal.fill")) {
-            event.setCancelled(true);
-            return;
-        }
-        if (event.getDestination().getType() == InventoryType.HOPPER) {
-            Material shopItem = event.getItem().getType();
-            event.setCancelled(true);
-            player.closeInventory();
-            Block chest = player.getTargetBlock(null, 5);
-
-            String direction = null;
-            if (((Chest) chest.getState()).getInventory() instanceof DoubleChestInventory) {
-                Optional<Pair<Block, String>> adj = findAdjacentOfSameType(chest);
-                if (!adj.isPresent()) {
-                    throw new IllegalStateException("Chest is double but there is no adjacent chest!");
-                }
-                direction = adj.get().getB();
-            }
-
-            Shop shop = new Shop();
-            shop.setOwner(player.getUniqueId());
-            shop.setLocation(new SerializableLocation(chest.getLocation()));
-            shop.setMaterial(shopItem);
-            shop.setDoubleDirection(direction == null ? Optional.empty() : Optional.of(direction));
-
-            player.sendMessage(Messages.BUY_PRICE_PROMPT);
-            awaitingBuyPrice.put(shop.getOwner(), shop);
-        }
-    }
-
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onInsert(InventoryClickEvent event) {
         Player player = (Player) event.getWhoClicked();
         if (!event.getView().getTitle().equals(ChatColor.DARK_AQUA + "Insert Item for Shop"))
@@ -124,20 +126,18 @@ public class CreateShopListener implements Listener {
             event.setCancelled(true);
             return;
         }
+
         if (event.getAction().equals(InventoryAction.PLACE_ONE)
                 || event.getAction().equals(InventoryAction.PLACE_ALL)
-                || event.getAction().equals(InventoryAction.MOVE_TO_OTHER_INVENTORY)
-                || event.getAction().equals(InventoryAction.HOTBAR_SWAP)) {
-
-            if (event.getSlot() != 2)
-                return;
+                || event.getAction().equals(InventoryAction.HOTBAR_SWAP) || (
+                event.getAction().equals(InventoryAction.MOVE_TO_OTHER_INVENTORY)
+                        && event.getClickedInventory() != null
+                        && event.getClickedInventory().getType().equals(InventoryType.PLAYER)
+        )) {
 
             Material shopItem = (event.getCurrentItem() == null || event.getCurrentItem().getType() == Material.AIR)
                     ? event.getCursor().getType() : event.getCurrentItem().getType();
-            event.setCancelled(true);
-            player.closeInventory();
             Block chest = player.getTargetBlock(null, 5);
-            Location location = chest.getLocation();
 
             String direction = null;
             if (((Chest) chest.getState()).getInventory() instanceof DoubleChestInventory) {
@@ -154,6 +154,9 @@ public class CreateShopListener implements Listener {
             shop.setMaterial(shopItem);
             shop.setDoubleDirection(direction == null ? Optional.empty() : Optional.of(direction));
 
+            event.setCancelled(true);
+            player.updateInventory();
+            player.closeInventory();
             player.sendMessage(Messages.BUY_PRICE_PROMPT);
             awaitingBuyPrice.put(shop.getOwner(), shop);
         }

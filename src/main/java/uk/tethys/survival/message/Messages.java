@@ -1,6 +1,9 @@
 package uk.tethys.survival.message;
 
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.inventory.ItemStack;
+
+import java.awt.*;
 
 public class Messages {
 
@@ -8,7 +11,7 @@ public class Messages {
     public static final String OPERATION_CANCELLED = "operation cancelled";
 
     public static final String CLAIM_TOOL_INFO = "claim tool info";
-    public static final String SHOP_TOOL_INFO = "shop tool info";
+    public static final String SHOP_TOOL_INFO = color("shop tool info", 71, 53, 30);
     public static final String CLAIM_CREATE_SUCCESS = "claim create success";
     public static final String CLAIM_CREATE_FAIL = "claim create fail";
     public static final String BUY_PRICE_PROMPT = "buy price prompt";
@@ -19,23 +22,28 @@ public class Messages {
     public static final String DENIED_DUE_TO_DB_FAIL = "denied due to db fail";
 
     public static String DRCL_WAIT() {
-        return "";
+        return "wait for your reward impatient man";
         // todo add time remaining
     }
 
     public static String SELF_BALANCE(int balance) {
-        return "";
+        return "balance is " + balance;
     }
 
     public static String RETRIEVE_ERROR(String val, String error) {
-        return "";
+        return "error retrieving";
     }
 
     public static String UNLOCK_ITEM(ItemStack itemStack) {
-        return "";
+        return "item unlocked";
     }
 
     public static String CLAIM_AREA_SIZE(int min, int max) {
-        return "";
+        return "wrong size claim...";
     }
+
+    private static String color(String text, int r, int g, int b) {
+        return ChatColor.of(new Color(r, g, b)) + text + ChatColor.RESET;
+    }
+
 }
