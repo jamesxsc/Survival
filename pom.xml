@@ -95,11 +95,11 @@
                                             <type>jar</type>
                                             <classifier>shaded</classifier>
                                             <overWrite>true</overWrite>
-                                            <outputDirectory>\\BC-SRV\Prod\Dev\plugins\</outputDirectory>
+                                            <outputDirectory>\\10.0.1.230\Prod\Dev\plugins\</outputDirectory>
                                             <destFileName>Survival-DEV-COPY.jar</destFileName>
                                         </artifactItem>
                                     </artifactItems>
-                                    <outputDirectory>\\BC-SRV\Prod\Dev\plugins\</outputDirectory>
+                                    <outputDirectory>\\10.0.1.230\Prod\Dev\plugins\</outputDirectory>
                                     <overWriteReleases>true</overWriteReleases>
                                     <overWriteSnapshots>true</overWriteSnapshots>
                                 </configuration>
@@ -122,15 +122,8 @@
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>1.15.2-R0.1-SNAPSHOT</version>
+            <version>1.16.1-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.bukkit</groupId>
-            <artifactId>CraftBukkit</artifactId>
-            <version>1.15.2-R0.1-SNAPSHOT</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/src/main/resources/craftbukkit-1.15.2.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>com.zaxxer</groupId>

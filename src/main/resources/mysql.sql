@@ -12,12 +12,11 @@ CREATE TABLE IF NOT EXISTS claims (
 ) DEFAULT CHARSET = utf8mb4;
 
 CREATE TABLE IF NOT EXISTS claim_flags (
-    `claim_id`  FOREIGN KEY         NOT NULL,
-    `flag`      VARCHAR             NOT NULL,
-    `value`     BIT                 NOT NULL,
+    `claim_id`  INT     NOT NULL,
+    `flag`      VARCHAR(255) NOT NULL,
+    `value`     TINYINT NOT NULL,
     PRIMARY KEY (claim_id, flag),
-    INDEX claim_index (claim_id),
-    FOREIGN KEY (claim_id)
+    FOREIGN KEY claim_index (claim_id)
         REFERENCES claims(id)
         ON DELETE CASCADE
 ) DEFAULT CHARSET = utf8mb4;

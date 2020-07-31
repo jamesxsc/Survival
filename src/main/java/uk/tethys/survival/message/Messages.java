@@ -4,19 +4,19 @@ import org.bukkit.inventory.ItemStack;
 
 public class Messages {
 
-    public static final String PLAYER_ONLY = "";
-    public static final String OPERATION_CANCELLED = "";
+    public static final String PLAYER_ONLY = "no console";
+    public static final String OPERATION_CANCELLED = "operation cancelled";
 
-    public static final String CLAIM_TOOL_INFO = "";
-    public static final String SHOP_TOOL_INFO = "";
-    public static final String CLAIM_CREATE_SUCCESS = "";
-    public static final String CLAIM_CREATE_FAIL = "";
-    public static final String BUY_PRICE_PROMPT = "";
-    public static final String NFE_LOOP_OR_EXIT = "";
-    public static final String SELL_PRICE_PROMPT = "";
-    public static final String NO_BUY_OR_SELL = "";
-    public static final String CREATING_SHOP = "";
-    public static final String DENIED_DUE_TO_DB_FAIL = "";
+    public static final String CLAIM_TOOL_INFO = "claim tool info";
+    public static final String SHOP_TOOL_INFO = "shop tool info";
+    public static final String CLAIM_CREATE_SUCCESS = "claim create success";
+    public static final String CLAIM_CREATE_FAIL = "claim create fail";
+    public static final String BUY_PRICE_PROMPT = "buy price prompt";
+    public static final String NFE_LOOP_OR_EXIT = "nfe loop or exit";
+    public static final String SELL_PRICE_PROMPT = "sell price prompt";
+    public static final String NO_BUY_OR_SELL = "no buy or sell";
+    public static final String CREATING_SHOP = "creating shop";
+    public static final String DENIED_DUE_TO_DB_FAIL = "denied due to db fail";
 
     public static String DRCL_WAIT() {
         return "";
