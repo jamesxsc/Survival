@@ -23,7 +23,7 @@ public class CreateShopDisplayTask extends BukkitRunnable {
         Location location = shop.getLocation().getLocation();
         if (((Chest) location.getBlock().getState()) instanceof DoubleChestInventory) {
             if (!shop.getDoubleDirection().isPresent())
-                throw new RuntimeException(
+                throw new IllegalStateException(
                         "Method Shop#getDoubleDirection() (ShopListener#findAdjacentOfSameType(Block)) returned a very unexpected result. " +
                                 "Check plugin jar hash.");
             if (shop.getDoubleDirection().get().equals("WEST")) {
@@ -37,7 +37,7 @@ public class CreateShopDisplayTask extends BukkitRunnable {
             } else if (shop.getDoubleDirection().get().equals("NORTH")) {
                 location.setX(location.getBlockX() + .5);
             } else
-                throw new RuntimeException(
+                throw new IllegalStateException(
                         "Method Shop#getDoubleDirection() (ShopListener#findAdjacentOfSameType(Block)) returned a very unexpected result. " +
                                 "Check plugin jar hash.");
         } else {

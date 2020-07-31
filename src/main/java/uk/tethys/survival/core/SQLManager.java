@@ -58,19 +58,6 @@ public class SQLManager {
         }
     }
 
-    //todo do we need this with the exists checks in schema file?
-    @Deprecated
-    private boolean tableExists(Connection c, String table) throws SQLException {
-        try (ResultSet set = c.getMetaData().getTables(null, null, "%", null)) {
-            while (set.next()) {
-                if (set.getString("TABLE_NAME").equalsIgnoreCase(table)) {
-                    return true;
-                }
-            }
-            return false;
-        }
-    }
-
     public Connection getConnection() throws SQLException {
         return dataSource.getConnection();
     }

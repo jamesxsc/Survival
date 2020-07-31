@@ -14,6 +14,7 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import uk.tethys.survival.Survival;
+import uk.tethys.survival.message.Messages;
 
 import java.util.Arrays;
 import java.util.Objects;
@@ -29,7 +30,7 @@ public class DRCLCommand implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
         if (!(commandSender instanceof Player)) {
-            commandSender.sendMessage("No player not only please");
+            commandSender.sendMessage(Messages.PLAYER_ONLY);
             return true;
         }
         Player player = (Player) commandSender;
@@ -38,8 +39,7 @@ public class DRCLCommand implements CommandExecutor {
             reward.setContents(getContents());
             player.openInventory(reward);
         } else {
-            player.sendMessage("You already claimed that today");
-            // todo hours until next day?
+            player.sendMessage(Messages.DRCL_WAIT());
         }
         return true;
     }

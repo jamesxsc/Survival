@@ -12,6 +12,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryMoveItemEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -20,6 +21,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import uk.tethys.survival.Survival;
+import uk.tethys.survival.message.Messages;
 import uk.tethys.survival.objects.Shop;
 import uk.tethys.survival.tasks.CreateShopDisplayTask;
 import uk.tethys.survival.util.Pair;
@@ -77,9 +79,43 @@ public class CreateShopListener implements Listener {
     }
 
     @EventHandler
-    public void onInsert(InventoryClickEvent event) {
-        //todo only works second time?
+    public void onInsert(InventoryMoveItemEvent event) {
+        Player player = (Player) event.getInitiator().getViewers().get(0);
+        if (!player.getOpenInventory().getTitle().equals(ChatColor.DARK_AQUA + "Insert Item for Shop"))
+            return;
+        event.getItem();
+        if (event.getItem().getItemMeta() != null && event.getItem().getItemMeta().getLocalizedName().equals("survival.internal.fill")) {
+            event.setCancelled(true);
+            return;
+        }
+        if (event.getDestination().getType() == InventoryType.HOPPER) {
+            Material shopItem = event.getItem().getType();
+            event.setCancelled(true);
+            player.closeInventory();
+            Block chest = player.getTargetBlock(null, 5);
 
+            String direction = null;
+            if (((Chest) chest.getState()).getInventory() instanceof DoubleChestInventory) {
+                Optional<Pair<Block, String>> adj = findAdjacentOfSameType(chest);
+                if (!adj.isPresent()) {
+                    throw new IllegalStateException("Chest is double but there is no adjacent chest!");
+                }
+                direction = adj.get().getB();
+            }
+
+            Shop shop = new Shop();
+            shop.setOwner(player.getUniqueId());
+            shop.setLocation(new SerializableLocation(chest.getLocation()));
+            shop.setMaterial(shopItem);
+            shop.setDoubleDirection(direction == null ? Optional.empty() : Optional.of(direction));
+
+            player.sendMessage(Messages.BUY_PRICE_PROMPT);
+            awaitingBuyPrice.put(shop.getOwner(), shop);
+        }
+    }
+
+    @EventHandler
+    public void onInsert(InventoryClickEvent event) {
         Player player = (Player) event.getWhoClicked();
         if (!event.getView().getTitle().equals(ChatColor.DARK_AQUA + "Insert Item for Shop"))
             return;
@@ -107,7 +143,7 @@ public class CreateShopListener implements Listener {
             if (((Chest) chest.getState()).getInventory() instanceof DoubleChestInventory) {
                 Optional<Pair<Block, String>> adj = findAdjacentOfSameType(chest);
                 if (!adj.isPresent()) {
-                    throw new RuntimeException("Chest is double but there is no adjacent chest!");
+                    throw new IllegalStateException("Chest is double but there is no adjacent chest!");
                 }
                 direction = adj.get().getB();
             }
@@ -118,7 +154,7 @@ public class CreateShopListener implements Listener {
             shop.setMaterial(shopItem);
             shop.setDoubleDirection(direction == null ? Optional.empty() : Optional.of(direction));
 
-            player.sendMessage("Please enter the price at which you would like to allow players to buy this item from you at");
+            player.sendMessage(Messages.BUY_PRICE_PROMPT);
             awaitingBuyPrice.put(shop.getOwner(), shop);
         }
     }
@@ -131,7 +167,7 @@ public class CreateShopListener implements Listener {
         if (awaitingBuyPrice.containsKey(player.getUniqueId())) {
             event.setCancelled(true);
             if (message.toLowerCase().contains("exit")) {
-                player.sendMessage("Shop creation cancelled");
+                player.sendMessage(Messages.OPERATION_CANCELLED);
                 awaitingBuyPrice.remove(player.getUniqueId());
                 return;
             }
@@ -139,18 +175,18 @@ public class CreateShopListener implements Listener {
             try {
                 price = Integer.parseInt(message);
             } catch (NumberFormatException e) {
-                player.sendMessage("That is not a valid number, please try again or type 'exit' to cancel");
+                player.sendMessage(Messages.NFE_LOOP_OR_EXIT);
                 return;
             }
             Shop shop = awaitingBuyPrice.get(player.getUniqueId());
             shop.setBuy(price == -1 ? price : Math.abs(price));
-            player.sendMessage("Please enter the price at which you would like to allow players to sell this item to you at");
+            player.sendMessage(Messages.SELL_PRICE_PROMPT);
             awaitingSellPrice.put(player.getUniqueId(), shop);
             awaitingBuyPrice.remove(player.getUniqueId());
         } else if (awaitingSellPrice.containsKey(player.getUniqueId())) {
             event.setCancelled(true);
             if (message.toLowerCase().contains("exit")) {
-                player.sendMessage("Shop creation cancelled");
+                player.sendMessage(Messages.OPERATION_CANCELLED);
                 awaitingSellPrice.remove(player.getUniqueId());
                 return;
             }
@@ -158,24 +194,23 @@ public class CreateShopListener implements Listener {
             try {
                 price = Integer.parseInt(message);
             } catch (NumberFormatException e) {
-                player.sendMessage("That is not a valid number, please try again or type 'exit' to cancel");
+                player.sendMessage(Messages.NFE_LOOP_OR_EXIT);
                 return;
             }
 
             Shop shop = awaitingSellPrice.get(player.getUniqueId());
             if (shop.getBuy() == -1 && price == -1) {
-                player.sendMessage("Shop must either sell or buy, please enter a sell price or type 'exit' to cancel");
+                player.sendMessage(Messages.NO_BUY_OR_SELL);
                 return;
             }
             shop.setSell(price == -1 ? price : Math.abs(price));
             awaitingSellPrice.remove(player.getUniqueId());
-            player.sendMessage("Creating shop...");
 
+            player.sendMessage(Messages.CREATING_SHOP);
             new CreateShopDisplayTask(shop).runTask(plugin);
         }
     }
 
-    @SuppressWarnings("DuplicatedCode")
     private Optional<Pair<Block, String>> findAdjacentOfSameType(Block block) {
         Material type = block.getType();
         Location first = block.getLocation();

@@ -36,6 +36,7 @@ public class EconomyListener implements Listener {
         Date lastPlayed = new Date(player.getLastPlayed());
         if (!lastPlayed.toInstant().truncatedTo(ChronoUnit.DAYS).equals(new Date().toInstant().truncatedTo(ChronoUnit.DAYS))) {
             allowed.add(player.getUniqueId());
+            // todo fancy message building
             player.sendMessage("");
             player.spigot().sendMessage(new ComponentBuilder(player.getDisplayName()).color(ChatColor.DARK_AQUA)
                     .append(", ").color(ChatColor.AQUA).append("you have not yet claimed your daily logon reward yet! ")

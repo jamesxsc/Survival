@@ -25,6 +25,7 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scoreboard.Team;
 import uk.tethys.survival.Survival;
+import uk.tethys.survival.message.Messages;
 import uk.tethys.survival.objects.Claim;
 import uk.tethys.survival.tasks.ClaimTask;
 
@@ -56,13 +57,9 @@ public class ClaimListener implements Listener {
         ItemStack item = event.getItem();
         if (item != null && item.getItemMeta() != null
                 && item.getItemMeta().getLocalizedName().equals("survival.items.tools.claim")) {
-            if (!claimCorners.containsKey(uuid)) {
+            if (!claimCorners.containsKey(uuid) || claimCorners.get(uuid).getWorld() != player.getWorld()) {
                 Location corner = event.getClickedBlock().getLocation();
-
-                //todo WORLD CHECKS = CANCELLING! yes please
-
                 claimCorners.put(uuid, corner);
-
                 particleTasks.put(uuid, new ClaimTask.SustainParticle(player, 6 / 24D, corner)
                         .runTaskTimer(plugin, 0, 8).getTaskId());
                 player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BIT, 1.0f, 1.5f);
@@ -82,8 +79,7 @@ public class ClaimListener implements Listener {
 
                 claimCorners.remove(uuid);
 
-                // time to figure out claim size
-
+                // figure out claim size
                 int lengthX = Math.abs(corner1.getBlockX() - corner2.getBlockX());
                 int lengthZ = Math.abs(corner1.getBlockZ() - corner2.getBlockZ());
                 int area = lengthX * lengthZ;
@@ -91,8 +87,7 @@ public class ClaimListener implements Listener {
                 // todo add const for this values
                 if (area < 50) {
                     player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BIT, 1.0f, .7f);
-                    player.sendMessage("Mission failed.");
-                    player.sendMessage("Claimed area must be greater than 50 blocks");
+                    player.sendMessage(Messages.CLAIM_AREA_SIZE(50, -1));
                     return;
                 }
 
@@ -128,7 +123,7 @@ public class ClaimListener implements Listener {
                                 )));
                     }
                 } catch (SQLException e) {
-                    //todo player feeback
+                    player.sendMessage(Messages.RETRIEVE_ERROR("sql.claims", e.getMessage()));
                     plugin.getLogger().severe("Error obtaining overlapping claims from DB");
                     e.printStackTrace();
                 }
@@ -146,7 +141,6 @@ public class ClaimListener implements Listener {
 
                 for (Claim c : overlapping) {
                     ChatColor color = ChatColor.values()[(int) (System.currentTimeMillis() % ChatColor.values().length)];
-                    player.sendMessage(color + "Area already claimed by another player!");
 
                     Location c1 = c.getCorner1().getLocation();
                     Location c2 = c.getCorner2().getLocation();
@@ -154,7 +148,7 @@ public class ClaimListener implements Listener {
                     c2.setY(playerY);
                     Location c3 = new Location(world, c1.getX(), playerY, c2.getZ());
                     Location c4 = new Location(world, c2.getX(), playerY, c1.getZ());
-                    // todo display claims
+
                     Set<Slime> corners = new HashSet<>();
                     corners.add(world.spawn(c1, Slime.class));
                     corners.add(world.spawn(c2, Slime.class));
@@ -177,24 +171,27 @@ public class ClaimListener implements Listener {
                     }
 
                 }
-                //todo temp
+
                 if (overlapping.size() == 0) {
-                    plugin.getClaimManager().addClaim(newClaim);
-                    player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BIT, 1.0f, 1.7f);
-
-                    player.sendMessage("Claim created successfully!");
-                    return;
+                    try {
+                        plugin.getClaimManager().addClaim(newClaim);
+                        player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BIT, 1.0f, 1.7f);
+                        player.sendMessage(Messages.CLAIM_CREATE_SUCCESS);
+                    } catch (SQLException e) {
+                        player.sendMessage(Messages.CLAIM_CREATE_FAIL);
+                    }
+                } else {
+                    player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BIT, 1.0f, .7f);
+                    player.sendMessage(Messages.CLAIM_CREATE_FAIL);
                 }
-                player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BIT, 1.0f, .7f);
-                player.sendMessage("Mission failed.");
-
-
             }
         }
     }
 
     @SuppressWarnings("UnnecessaryReturnStatement")
-    @EventHandler
+
+    //todo generified tool prevention
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onCraft(PrepareItemCraftEvent event) {
         Arrays.asList(event.getView().getTopInventory().getContents()).forEach(stack -> {
             if (stack != null && stack.getItemMeta() != null &&
@@ -209,7 +206,7 @@ public class ClaimListener implements Listener {
     }
 
     // check for unauthorised breaking of blocks
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onBreak(BlockBreakEvent event) {
         if (isDenied(event.getPlayer(), event.getBlock().getLocation(), BlockBreakEvent.class)) {
             event.setCancelled(true);
@@ -217,7 +214,7 @@ public class ClaimListener implements Listener {
     }
 
     // check for unauthorised placing of blocks
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlace(BlockPlaceEvent event) {
         if (event.getBlock().getType() == Material.SHULKER_BOX) {
             //todo shulker box logic
@@ -249,7 +246,7 @@ public class ClaimListener implements Listener {
     }
 
     // prevent unauthorised triggering of raids
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onBreak(RaidTriggerEvent event) {
         if (isDenied(event.getPlayer(), event.getRaid().getLocation(), RaidTriggerEvent.class)) {
             event.setCancelled(true);
@@ -257,7 +254,7 @@ public class ClaimListener implements Listener {
     }
 
     // check for unauthorised vehicle destruction
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onDestroy(VehicleDestroyEvent event) {
         if (event.getAttacker() instanceof Player &&
                 isDenied((Player) event.getAttacker(), event.getVehicle().getLocation(), VehicleDestroyEvent.class)) {
@@ -266,7 +263,7 @@ public class ClaimListener implements Listener {
     }
 
     // check for unauthorised vehicle usage
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onEnter(VehicleEnterEvent event) {
         if (event.getEntered() instanceof Player &&
                 isDenied((Player) event.getEntered(), event.getVehicle().getLocation(), VehicleEnterEvent.class)) {
@@ -275,7 +272,7 @@ public class ClaimListener implements Listener {
     }
 
     // check for unauthorised entity damaging
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onDamage(EntityDamageByEntityEvent event) {
         if (event.getDamager() instanceof Player &&
                 isDenied((Player) event.getDamager(), event.getEntity().getLocation(), EntityDamageByEntityEvent.class)) {
@@ -284,7 +281,7 @@ public class ClaimListener implements Listener {
     }
 
     // check for book robbery
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onTake(PlayerTakeLecternBookEvent event) {
         if (isDenied(event.getPlayer(), event.getLectern().getLocation(), PlayerTakeLecternBookEvent.class)) {
             event.setCancelled(true);
@@ -292,7 +289,7 @@ public class ClaimListener implements Listener {
     }
 
     // check for unauthorised bed usage
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onEnter(PlayerBedEnterEvent event) {
         if (isDenied(event.getPlayer(), event.getBed().getLocation(), PlayerBedEnterEvent.class)) {
             event.setCancelled(true);
@@ -300,7 +297,7 @@ public class ClaimListener implements Listener {
     }
 
     // check for fluid robbery
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onFill(PlayerBucketFillEvent event) {
         if (isDenied(event.getPlayer(), event.getBlock().getLocation(), PlayerBucketFillEvent.class)) {
             event.setCancelled(true);
@@ -308,7 +305,7 @@ public class ClaimListener implements Listener {
     }
 
     // check for unauthorised entity interactions
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onInteract(PlayerInteractEntityEvent event) {
         if (isDenied(event.getPlayer(), event.getRightClicked().getLocation(), PlayerInteractEntityEvent.class)) {
             event.setCancelled(true);
@@ -316,7 +313,7 @@ public class ClaimListener implements Listener {
     }
 
     // check for unauthorised leashing
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onLeash(PlayerLeashEntityEvent event) {
         if (isDenied(event.getPlayer(), event.getEntity().getLocation(), PlayerLeashEntityEvent.class)) {
             event.setCancelled(true);
@@ -324,7 +321,7 @@ public class ClaimListener implements Listener {
     }
 
     // check for unauthorised shearing
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onShear(PlayerShearEntityEvent event) {
         if (isDenied(event.getPlayer(), event.getEntity().getLocation(), PlayerShearEntityEvent.class)) {
             event.setCancelled(true);
@@ -332,13 +329,12 @@ public class ClaimListener implements Listener {
     }
 
     // fallback interact catch
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onGenericInteract(PlayerInteractEvent event) {
         // todo we will use this to catch exceptions found in beta testing should they not warrant their own method
     }
 
     private boolean isDenied(Player player, Location location, Class<? extends Event> eventType) {
-
         try (Connection connection = plugin.getDBConnection()) {
             ResultSet overlappingClaim = connection.prepareStatement(String.format(
                     "SELECT `owner`, `id` FROM claims WHERE `world` = '%s' && ((`x1` <= %d && %d <= `x2`) && (`z1` <= %d && %d <= `z2`)) LIMIT 1",
@@ -353,7 +349,7 @@ public class ClaimListener implements Listener {
                 player.sendMessage(ChatColor.AQUA + "Rejected by system. With EventType of " + eventType.getCanonicalName() + ChatColor.LIGHT_PURPLE + " In claim owned by " + overlappingClaim.getString("owner"));
             return inClaim;
         } catch (SQLException e) {
-            //todo player feedback
+            player.sendMessage(Messages.DENIED_DUE_TO_DB_FAIL);
             plugin.getLogger().severe("Error obtaining overlapping claim from DB");
             e.printStackTrace();
             // ensure that if there's an issue we don't allow griefing
