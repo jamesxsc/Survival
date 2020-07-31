@@ -1,2 +1,2 @@
 messages:
-  - src/**/Messages.*
+- 'src/**/Messages.java'
