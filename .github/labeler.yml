@@ -1,2 +1,2 @@
 messages:
-  - any: ['**/Messages.java']
+  - src/**/Messages.java
