@@ -46,4 +46,6 @@ public class Messages {
         return ChatColor.of(new Color(r, g, b)) + text + ChatColor.RESET;
     }
 
+    
+    
 }
