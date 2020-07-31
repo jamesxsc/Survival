@@ -45,5 +45,7 @@ public class Messages {
     private static String color(String text, int r, int g, int b) {
         return ChatColor.of(new Color(r, g, b)) + text + ChatColor.RESET;
     }
+    
+    
 
 }
