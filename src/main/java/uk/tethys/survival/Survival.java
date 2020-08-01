@@ -1,6 +1,7 @@
 package uk.tethys.survival;
 
 import org.bukkit.Bukkit;
+import org.bukkit.NamespacedKey;
 import org.bukkit.plugin.java.JavaPlugin;
 import uk.tethys.survival.commands.ClaimCommand;
 import uk.tethys.survival.commands.CreateShopCommand;
@@ -32,12 +33,18 @@ public class Survival extends JavaPlugin {
         return economyListener;
     }
 
+    public static NamespacedKey IS_CUSTOM_ITEM;
+
+    public static Survival INSTANCE;
+
     @Override
     public void onEnable() {
+        INSTANCE = this;
+
         try {
             sqlManager = new SQLManager(this);
             Bukkit.getLogger().info("Successfully connected to MySQL DB");
-        } catch (SQLException | IOException e) {
+        } catch (IOException | RuntimeException e) {
             // TODO NEEDS MORE VERBOSITY
             Bukkit.getLogger().severe("Connection to MySQL DB failed");
             e.printStackTrace();
@@ -45,6 +52,8 @@ public class Survival extends JavaPlugin {
             getPluginLoader().disablePlugin(this);
             return;
         }
+
+        IS_CUSTOM_ITEM = new NamespacedKey(this, "is-custom-item");
 
         getCommand("claim").setExecutor(new ClaimCommand(this));
         getCommand("shop").setExecutor(new ShopCommand(this));
@@ -56,12 +65,7 @@ public class Survival extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new CreateShopListener(this), this);
         economyListener = new EconomyListener(this);
         getServer().getPluginManager().registerEvents(this.economyListener, this);
-
-
-
         getServer().getPluginManager().registerEvents(new CentralShopListener(this), this);
-
-
 
         // managers
         claimManager = new ClaimManager(this);

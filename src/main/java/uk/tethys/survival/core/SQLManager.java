@@ -20,7 +20,7 @@ public class SQLManager {
     private final HikariDataSource dataSource;
     private final Survival plugin;
 
-    public SQLManager(Survival plugin) throws SQLException, IOException {
+    public SQLManager(Survival plugin) throws IOException, RuntimeException {
         this.plugin = plugin;
 
         HikariConfig config = new HikariConfig();
@@ -36,25 +36,23 @@ public class SQLManager {
         init();
     }
 
-    private void init() throws SQLException, IOException {
+    private void init() throws IOException, RuntimeException {
         applySchema();
     }
 
-    private void applySchema() {
+    private void applySchema() throws IOException, RuntimeException {
         List<String> statements;
-        try (InputStream is = plugin.getResource("mysql.sql")) {
-            if (is == null) {
-                throw new IOException("Schema file not found");
-            }
-            statements = getStatements(is);
-            try (Statement statement = getConnection().createStatement()) {
-                for (String s : statements)
-                    statement.addBatch(s);
-                statement.executeBatch();
-            }
-        } catch (SQLException | IOException e) {
-            Bukkit.getLogger().severe("Error applying schema");
-            e.printStackTrace();
+        InputStream is = plugin.getResource("mysql.sql");
+        if (is == null) {
+            throw new IOException("Schema file not found");
+        }
+        statements = getStatements(is);
+        try (Statement statement = getConnection().createStatement()) {
+            for (String s : statements)
+                statement.addBatch(s);
+            statement.executeBatch();
+        } catch (SQLException e) {
+            throw new RuntimeException("Error applying schema", e);
         }
     }
 

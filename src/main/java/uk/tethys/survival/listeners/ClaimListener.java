@@ -1,6 +1,9 @@
 package uk.tethys.survival.listeners;
 
+import net.md_5.bungee.api.ChatMessageType;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.*;
+import org.bukkit.block.Block;
 import org.bukkit.block.Container;
 import org.bukkit.block.data.Powerable;
 import org.bukkit.entity.Player;
@@ -14,20 +17,28 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.PlayerLeashEntityEvent;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryMoveItemEvent;
 import org.bukkit.event.inventory.PrepareItemCraftEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.event.raid.RaidTriggerEvent;
 import org.bukkit.event.vehicle.VehicleDestroyEvent;
 import org.bukkit.event.vehicle.VehicleEnterEvent;
 import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.persistence.PersistentDataContainer;
+import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scoreboard.Team;
 import uk.tethys.survival.Survival;
+import uk.tethys.survival.commands.ClaimCommand;
 import uk.tethys.survival.message.Messages;
 import uk.tethys.survival.objects.Claim;
 import uk.tethys.survival.tasks.ClaimTask;
+import uk.tethys.survival.util.SerializableLocation;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -51,146 +62,320 @@ public class ClaimListener implements Listener {
     @EventHandler
     public void onInteract(PlayerInteractEvent event) {
         if (event.getHand() != EquipmentSlot.HAND) return;
-        if (event.getAction() != Action.RIGHT_CLICK_BLOCK) return;
+        Action action = event.getAction();
+        if (action != Action.RIGHT_CLICK_BLOCK && action != Action.RIGHT_CLICK_AIR) return;
         Player player = event.getPlayer();
-        UUID uuid = player.getUniqueId();
         ItemStack item = event.getItem();
         if (item != null && item.getItemMeta() != null
-                && item.getItemMeta().getLocalizedName().equals("survival.items.tools.claim")) {
-            if (!claimCorners.containsKey(uuid) || claimCorners.get(uuid).getWorld() != player.getWorld()) {
-                Location corner = event.getClickedBlock().getLocation();
-                claimCorners.put(uuid, corner);
-                particleTasks.put(uuid, new ClaimTask.SustainParticle(player, 6 / 24D, corner)
-                        .runTaskTimer(plugin, 0, 8).getTaskId());
-                player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BIT, 1.0f, 1.5f);
-            } else {
-                Location corner1 = claimCorners.get(uuid);
-                Location corner2 = event.getClickedBlock().getLocation();
+                && (item.getItemMeta().getPersistentDataContainer().get(ClaimCommand.IS_CLAIM_TOOL, PersistentDataType.BYTE) == (byte) 1)) {
+            switch (item.getItemMeta().getPersistentDataContainer().get(ClaimCommand.CLAIM_TOOL_MODE, PersistentDataType.STRING)) {
+                case "claim":
+                    handleClaim(player, event.getClickedBlock(), action);
+                    break;
+                case "view":
+                    break;
+                case "flag":
+                    handleFlag(player);
+                    break;
+            }
+        }
+    }
 
-                if (!particleTasks.containsKey(uuid))
-                    throw new RuntimeException("Particle task not found for player " + uuid.toString());
-                else
-                    Bukkit.getScheduler().cancelTask(particleTasks.get(uuid));
+    private static LinkedList<String> modes = new LinkedList<String>() {{
+        add("claim");
+        add("view");
+        add("flag");
+    }};
 
-                player.spawnParticle(Particle.NOTE, corner1.getBlockX() + .5, corner1.getBlockY() + 1.5,
-                        corner1.getBlockZ() + .5, 0, 22 / 24D, 0, 0, 1);
-                player.spawnParticle(Particle.NOTE, corner2.getBlockX() + .5, corner2.getBlockY() + 1.5,
-                        corner2.getBlockZ() + .5, 0, 22 / 24D, 0, 0, 1);
+    @EventHandler
+    public void onClick(PlayerInteractEvent event) {
+        if (event.getAction() == Action.LEFT_CLICK_AIR || event.getAction() == Action.LEFT_CLICK_BLOCK) {
+            ItemStack itemStack = event.getItem();
+            if (itemStack != null && itemStack.getItemMeta() != null) {
+                ItemMeta meta = itemStack.getItemMeta();
+                if (meta.getPersistentDataContainer().get(ClaimCommand.IS_CLAIM_TOOL, PersistentDataType.BYTE) == (byte) 1) {
+                    String currentMode = meta.getPersistentDataContainer().get(ClaimCommand.CLAIM_TOOL_MODE, PersistentDataType.STRING);
+                    String newMode;
+                    int index = modes.indexOf(currentMode);
+                    if (index + 1 == modes.size())
+                        newMode = modes.get(0);
+                    else
+                        newMode = modes.get(index + 1);
+                    meta.getPersistentDataContainer().set(ClaimCommand.CLAIM_TOOL_MODE, PersistentDataType.STRING, newMode);
+                    itemStack.setItemMeta(meta);
 
-                claimCorners.remove(uuid);
-
-                // figure out claim size
-                int lengthX = Math.abs(corner1.getBlockX() - corner2.getBlockX());
-                int lengthZ = Math.abs(corner1.getBlockZ() - corner2.getBlockZ());
-                int area = lengthX * lengthZ;
-
-                // todo add const for this values
-                if (area < 50) {
-                    player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BIT, 1.0f, .7f);
-                    player.sendMessage(Messages.CLAIM_AREA_SIZE(50, -1));
-                    return;
-                }
-
-
-                double new1X = Math.min(corner1.getX(), corner2.getX());
-                double new1Z = Math.min(corner1.getZ(), corner2.getZ());
-                double new2X = Math.max(corner1.getX(), corner2.getX());
-                double new2Z = Math.max(corner1.getZ(), corner2.getZ());
-
-                corner1.setX(new1X);
-                corner1.setZ(new1Z);
-                corner2.setX(new2X);
-                corner2.setZ(new2Z);
-
-                Set<Claim> sameWorld = new HashSet<>();
-
-                try (Connection connection = plugin.getDBConnection()) {
-                    ResultSet overlappingClaims = connection.prepareStatement(String.format(
-                            "SELECT `owner`, `x1`, `z1`, `x2`, `z2`, `world` FROM claims WHERE `world` = '%s'",
-                            corner1.getWorld().getUID())).executeQuery();
-
-                    while (overlappingClaims.next()) {
-                        sameWorld.add(new Claim(UUID.fromString(overlappingClaims.getString("owner")),
-                                new Location(
-                                        Bukkit.getWorld(UUID.fromString(overlappingClaims.getString("world"))),
-                                        overlappingClaims.getInt("x1"), 128,
-                                        overlappingClaims.getInt("z1")
-                                ),
-                                new Location(
-                                        Bukkit.getWorld(UUID.fromString(overlappingClaims.getString("world"))),
-                                        overlappingClaims.getInt("x2"), 128,
-                                        overlappingClaims.getInt("z2")
-                                )));
-                    }
-                } catch (SQLException e) {
-                    player.sendMessage(Messages.RETRIEVE_ERROR("sql.claims", e.getMessage()));
-                    plugin.getLogger().severe("Error obtaining overlapping claims from DB");
-                    e.printStackTrace();
-                }
-
-                Claim newClaim = new Claim(player, corner1, corner2);
-
-                Set<Claim> overlapping = new HashSet<>();
-
-                for (Claim c : sameWorld)
-                    if (c.overlaps(newClaim) && newClaim.overlaps(c))
-                        overlapping.add(c);
-
-                double playerY = player.getLocation().getY();
-                World world = Bukkit.getWorld(newClaim.getCorner1().getWorld());
-
-                for (Claim c : overlapping) {
-                    ChatColor color = ChatColor.values()[(int) (System.currentTimeMillis() % ChatColor.values().length)];
-
-                    Location c1 = c.getCorner1().getLocation();
-                    Location c2 = c.getCorner2().getLocation();
-                    c1.setY(playerY);
-                    c2.setY(playerY);
-                    Location c3 = new Location(world, c1.getX(), playerY, c2.getZ());
-                    Location c4 = new Location(world, c2.getX(), playerY, c1.getZ());
-
-                    Set<Slime> corners = new HashSet<>();
-                    corners.add(world.spawn(c1, Slime.class));
-                    corners.add(world.spawn(c2, Slime.class));
-                    corners.add(world.spawn(c3, Slime.class));
-                    corners.add(world.spawn(c4, Slime.class));
-
-                    Team team = Bukkit.getScoreboardManager().getMainScoreboard().registerNewTeam(color + "svl.clm");
-                    team.setColor(color);
-                    for (Slime slime : corners) {
-                        slime.setCollidable(false);
-                        slime.setGravity(false);
-                        slime.setSize(1);
-                        slime.setAI(false);
-                        team.addEntry(slime.getUniqueId().toString());
-                        slime.setGlowing(true);
-                        slime.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 1000000, 2, true, false));
-
-                        //todo eventhandle this
-                        slime.setInvulnerable(true);
-                    }
-
-                }
-
-                if (overlapping.size() == 0) {
-                    try {
-                        plugin.getClaimManager().addClaim(newClaim);
-                        player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BIT, 1.0f, 1.7f);
-                        player.sendMessage(Messages.CLAIM_CREATE_SUCCESS);
-                    } catch (SQLException e) {
-                        player.sendMessage(Messages.CLAIM_CREATE_FAIL);
-                    }
-                } else {
-                    player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BIT, 1.0f, .7f);
-                    player.sendMessage(Messages.CLAIM_CREATE_FAIL);
+                    event.getPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(Messages.CLAIM_TOOL_MODE(newMode)));
                 }
             }
         }
     }
 
-    @SuppressWarnings("UnnecessaryReturnStatement")
+    private void handleClaim(Player player, Block block, Action action) {
+        if (action != Action.RIGHT_CLICK_BLOCK)
+            return;
 
-    //todo generified tool prevention
+        UUID uuid = player.getUniqueId();
+        if (!claimCorners.containsKey(uuid) || claimCorners.get(uuid).getWorld() != player.getWorld()) {
+            Location corner = block.getLocation();
+            claimCorners.put(uuid, corner);
+            particleTasks.put(uuid, new ClaimTask.SustainParticle(player, 6 / 24D, corner)
+                    .runTaskTimer(plugin, 0, 8).getTaskId());
+            player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BIT, 1.0f, 1.5f);
+        } else {
+            Location corner1 = claimCorners.get(uuid);
+            Location corner2 = block.getLocation();
+
+            if (!particleTasks.containsKey(uuid))
+                throw new RuntimeException("Particle task not found for player " + uuid.toString());
+            else
+                Bukkit.getScheduler().cancelTask(particleTasks.get(uuid));
+
+            player.spawnParticle(Particle.NOTE, corner1.getBlockX() + .5, corner1.getBlockY() + 1.5,
+                    corner1.getBlockZ() + .5, 0, 22 / 24D, 0, 0, 1);
+            player.spawnParticle(Particle.NOTE, corner2.getBlockX() + .5, corner2.getBlockY() + 1.5,
+                    corner2.getBlockZ() + .5, 0, 22 / 24D, 0, 0, 1);
+
+            claimCorners.remove(uuid);
+
+            // figure out claim size
+            int lengthX = Math.abs(corner1.getBlockX() - corner2.getBlockX());
+            int lengthZ = Math.abs(corner1.getBlockZ() - corner2.getBlockZ());
+            int area = lengthX * lengthZ;
+
+            // todo add const for this values
+            if (area < 50) {
+                player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BIT, 1.0f, .7f);
+                player.sendMessage(Messages.CLAIM_AREA_SIZE(50, -1));
+                return;
+            }
+
+
+            double new1X = Math.min(corner1.getX(), corner2.getX());
+            double new1Z = Math.min(corner1.getZ(), corner2.getZ());
+            double new2X = Math.max(corner1.getX(), corner2.getX());
+            double new2Z = Math.max(corner1.getZ(), corner2.getZ());
+
+            corner1.setX(new1X);
+            corner1.setZ(new1Z);
+            corner2.setX(new2X);
+            corner2.setZ(new2Z);
+
+            Set<Claim> sameWorld = new HashSet<>();
+
+            try (Connection connection = plugin.getDBConnection()) {
+                ResultSet overlappingClaims = connection.prepareStatement(String.format(
+                        "SELECT `owner`, `x1`, `z1`, `x2`, `z2`, `world` FROM claims WHERE `world` = '%s'",
+                        corner1.getWorld().getUID())).executeQuery();
+
+                while (overlappingClaims.next()) {
+                    sameWorld.add(new Claim(UUID.fromString(overlappingClaims.getString("owner")),
+                            new Location(
+                                    Bukkit.getWorld(UUID.fromString(overlappingClaims.getString("world"))),
+                                    overlappingClaims.getInt("x1"), 128,
+                                    overlappingClaims.getInt("z1")
+                            ),
+                            new Location(
+                                    Bukkit.getWorld(UUID.fromString(overlappingClaims.getString("world"))),
+                                    overlappingClaims.getInt("x2"), 128,
+                                    overlappingClaims.getInt("z2")
+                            )));
+                }
+            } catch (SQLException e) {
+                player.sendMessage(Messages.RETRIEVE_ERROR("sql.claims", e.getMessage()));
+                plugin.getLogger().severe("Error obtaining overlapping claims from DB");
+                e.printStackTrace();
+            }
+
+            Claim newClaim = new Claim(player, corner1, corner2);
+
+            Set<Claim> overlapping = new HashSet<>();
+
+            for (Claim c : sameWorld)
+                if (c.overlaps(newClaim) && newClaim.overlaps(c))
+                    overlapping.add(c);
+
+            double playerY = player.getLocation().getY();
+            World world = Bukkit.getWorld(newClaim.getCorner1().getWorld());
+
+            for (Claim c : overlapping) {
+                ChatColor color = ChatColor.values()[(int) (System.currentTimeMillis() % ChatColor.values().length)];
+
+                Location c1 = c.getCorner1().getLocation();
+                Location c2 = c.getCorner2().getLocation();
+                c1.setY(playerY);
+                c2.setY(playerY);
+                Location c3 = new Location(world, c1.getX(), playerY, c2.getZ());
+                Location c4 = new Location(world, c2.getX(), playerY, c1.getZ());
+
+                Set<Slime> corners = new HashSet<>();
+                corners.add(world.spawn(c1, Slime.class));
+                corners.add(world.spawn(c2, Slime.class));
+                corners.add(world.spawn(c3, Slime.class));
+                corners.add(world.spawn(c4, Slime.class));
+
+                Team team = Bukkit.getScoreboardManager().getMainScoreboard().registerNewTeam(color + "svl.clm");
+                team.setColor(color);
+                for (Slime slime : corners) {
+                    slime.setCollidable(false);
+                    slime.setGravity(false);
+                    slime.setSize(1);
+                    slime.setAI(false);
+                    team.addEntry(slime.getUniqueId().toString());
+                    slime.setGlowing(true);
+                    slime.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 1000000, 2, true, false));
+
+                    //todo eventhandle this
+                    slime.setInvulnerable(true);
+                }
+
+            }
+
+            if (overlapping.size() == 0) {
+                try {
+                    plugin.getClaimManager().addClaim(newClaim);
+                    player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BIT, 1.0f, 1.7f);
+                    player.sendMessage(Messages.CLAIM_CREATE_SUCCESS);
+                } catch (SQLException e) {
+                    player.sendMessage(Messages.CLAIM_CREATE_FAIL);
+                }
+            } else {
+                player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BIT, 1.0f, .7f);
+                player.sendMessage(Messages.CLAIM_CREATE_FAIL);
+            }
+        }
+    }
+
+    private void handleView() {
+
+    }
+
+    private void handleFlag(Player player) {
+        if (Claim.getClaim(player.getLocation()).isPresent()) {
+            Inventory selectFlag = Bukkit.createInventory(null, 54, "Select Flag to Modify");
+            selectFlag.setContents(getSelectFlagContents());
+            player.openInventory(selectFlag);
+        } else {
+            player.sendMessage(Messages.NOT_IN_CLAIM);
+        }
+    }
+
+    private ItemStack[] getSelectFlagContents() {
+        ItemStack[] stacks = new ItemStack[54];
+        int i = 9 * 2 + 2;
+        for (Claim.Flag flag : Claim.Flag.values()) {
+            ItemStack selectFlag = new ItemStack(flag.getIcon());
+            ItemMeta meta = selectFlag.getItemMeta();
+            meta.setDisplayName(ChatColor.RESET + flag.getDislayName());
+            PersistentDataContainer container = meta.getPersistentDataContainer();
+            container.set(ClaimCommand.CLAIM_FLAG_NAME, PersistentDataType.STRING, flag.name());
+            selectFlag.setItemMeta(meta);
+
+            if (i > 54)
+                throw new RuntimeException("Too many flags exist!");
+
+            if (i % 9 == 0)
+                i += 2;
+
+            stacks[i - 1] = selectFlag;
+
+            i++;
+        }
+
+        ItemStack fill = new ItemStack(Material.BLACK_STAINED_GLASS_PANE);
+        ItemMeta fillMeta = fill.getItemMeta();
+        fillMeta.setDisplayName(ChatColor.BLACK + "" + ChatColor.MAGIC + "xxx");
+        fillMeta.setLocalizedName("survival.internal.fill");
+        fill.setItemMeta(fillMeta);
+
+        for (int j = 0; j < stacks.length; j++) {
+            if (stacks[j] == null) {
+                stacks[j] = fill;
+            }
+        }
+
+        return stacks;
+    }
+
+    @EventHandler
+    public void onSelectFlag(InventoryClickEvent event) {
+        ItemStack item = event.getCurrentItem();
+        event.setCancelled(onSelectFlag(item, (Player) event.getWhoClicked()));
+    }
+
+    @EventHandler
+    public void onSelectFlag(InventoryMoveItemEvent event) {
+        ItemStack item = event.getItem();
+        event.setCancelled(onSelectFlag(item, (Player) event.getInitiator().getViewers().get(0)));
+    }
+
+    private boolean onSelectFlag(ItemStack itemStack, Player player) {
+        if (itemStack != null && itemStack.getItemMeta() != null) {
+            ItemMeta meta = itemStack.getItemMeta();
+
+            if (meta.getPersistentDataContainer().has(ClaimCommand.CLAIM_FLAG_NAME, PersistentDataType.STRING)) {
+                final String flagName = meta.getPersistentDataContainer().get(ClaimCommand.CLAIM_FLAG_NAME, PersistentDataType.STRING);
+
+                Optional<Claim> claimOptional = Claim.getClaim(player.getLocation());
+
+                if (!claimOptional.isPresent())
+                    return true;
+
+                Claim claim = claimOptional.get();
+
+                Inventory modifyFlag = Bukkit.createInventory(null, 54, "Modify Flag - " + meta.getDisplayName());
+
+                ItemStack[] contents = new ItemStack[54];
+                ItemStack partner = new ItemStack(Material.CHAIN);
+                ItemMeta partnerMeta = partner.getItemMeta();
+
+                partnerMeta.setDisplayName(ChatColor.RESET + "Partner");
+                boolean partnerAllowed = claim.getFlags().stream().filter(
+                        af -> af.getFlag().name().equals(flagName)
+                                && af.getAuthLevel().name().equals("partner")).findFirst()
+                        .orElseGet(() -> new Claim.AccessFlag(Claim.Flag.valueOf(flagName).isDefaultPartner())).getValue();
+                partnerMeta.setLore(Arrays.asList("Currently " + (partnerAllowed ? "allowed" : "denied"), "Click to toggle"));
+
+                partner.setItemMeta(partnerMeta);
+                contents[9 * 2 + 3] = partner;
+                ItemStack local = new ItemStack(Material.SOUL_CAMPFIRE);
+                ItemMeta localMeta = local.getItemMeta();
+
+                localMeta.setDisplayName(ChatColor.RESET + "Local");
+                boolean localAllowed = claim.getFlags().stream().filter(
+                        af -> af.getFlag().name().equals(flagName)
+                                && af.getAuthLevel().name().equals("local")).findFirst()
+                        .orElseGet(() -> new Claim.AccessFlag(Claim.Flag.valueOf(flagName).isDefaultLocal())).getValue();
+                localMeta.setLore(Arrays.asList("Currently " + (localAllowed ? "allowed" : "denied"), "Click to toggle"));
+
+
+                local.setItemMeta(localMeta);
+                contents[9 * 2 + 4] = local;
+                ItemStack wanderer = new ItemStack(Material.LEATHER_BOOTS);
+                ItemMeta wandererMeta = wanderer.getItemMeta();
+
+                wandererMeta.setDisplayName(ChatColor.RESET + "Wanderer");
+                boolean wandererAllowed = claim.getFlags().stream().filter(
+                        af -> af.getFlag().name().equals(flagName)
+                                && af.getAuthLevel().name().equals("wanderer")).findFirst()
+                        .orElseGet(() -> new Claim.AccessFlag(Claim.Flag.valueOf(flagName).isDefaultWanderer())).getValue();
+                wandererMeta.setLore(Arrays.asList("Currently " + (wandererAllowed ? "allowed" : "denied"), "Click to toggle"));
+
+
+                wanderer.setItemMeta(wandererMeta);
+                contents[9 * 2 + 5] = wanderer;
+
+                modifyFlag.setContents(contents);
+
+                player.openInventory(modifyFlag);
+
+                return true;
+            }
+        }
+        return false;
+    }
+
+
+    //todo generified tool prevention!! nbt!
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onCraft(PrepareItemCraftEvent event) {
         Arrays.asList(event.getView().getTopInventory().getContents()).forEach(stack -> {
@@ -200,7 +385,6 @@ public class ClaimListener implements Listener {
                 event.getView().getTopInventory().removeItem(stack);
                 event.getView().getBottomInventory().addItem(stack);
                 ((Player) event.getView().getPlayer()).updateInventory();
-                return;
             }
         });
     }

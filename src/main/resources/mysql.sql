@@ -12,9 +12,10 @@ CREATE TABLE IF NOT EXISTS claims (
 ) DEFAULT CHARSET = utf8mb4;
 
 CREATE TABLE IF NOT EXISTS claim_flags (
-    `claim_id`  INT     NOT NULL,
-    `flag`      VARCHAR(255) NOT NULL,
-    `value`     TINYINT NOT NULL,
+    `claim_id`      INT             NOT NULL,
+    `flag`          VARCHAR(255)    NOT NULL,
+    `auth_level`    VARCHAR(20)     NOT NULL,
+    `value`         BIT             NOT NULL,
     PRIMARY KEY (claim_id, flag),
     FOREIGN KEY claim_index (claim_id)
         REFERENCES claims(id)
