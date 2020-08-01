@@ -92,7 +92,8 @@ public class ClaimListener implements Listener {
             ItemStack itemStack = event.getItem();
             if (itemStack != null && itemStack.getItemMeta() != null) {
                 ItemMeta meta = itemStack.getItemMeta();
-                if (meta.getPersistentDataContainer().get(ClaimCommand.IS_CLAIM_TOOL, PersistentDataType.BYTE) == (byte) 1) {
+                if (meta.getPersistentDataContainer().has(ClaimCommand.IS_CLAIM_TOOL, PersistentDataType.BYTE) &&
+                        meta.getPersistentDataContainer().get(ClaimCommand.IS_CLAIM_TOOL, PersistentDataType.BYTE) == (byte) 1) {
                     String currentMode = meta.getPersistentDataContainer().get(ClaimCommand.CLAIM_TOOL_MODE, PersistentDataType.STRING);
                     String newMode;
                     int index = modes.indexOf(currentMode);
@@ -258,7 +259,7 @@ public class ClaimListener implements Listener {
                 player.sendMessage(Messages.NOT_IN_CLAIM);
             }
         } catch (SQLException e) {
-            player.sendMessage(Messages.DATABASE_ERROR("sql.claims", e.getMessage()));
+            player.sendMessage(Messages.DATABASE_ERROR("sql.claims" + " " + "handleFlag", e.getMessage()));
         }
     }
 
@@ -324,7 +325,7 @@ public class ClaimListener implements Listener {
                     claimOptional = Claim.getClaim(player.getLocation());
                 } catch (SQLException e) {
                     player.closeInventory();
-                    player.sendMessage(Messages.DATABASE_ERROR("sql.claims", e.getMessage()));
+                    player.sendMessage(Messages.DATABASE_ERROR("sql.claims" + " " + "onSelectFlag", e.getMessage()));
                 }
 
                 if (!claimOptional.isPresent())
@@ -350,11 +351,12 @@ public class ClaimListener implements Listener {
 
                     } catch (SQLException e) {
                         player.closeInventory();
-                        player.sendMessage(Messages.DATABASE_ERROR("sql.claims", e.getMessage()));
+                        e.printStackTrace();
+                        player.sendMessage(Messages.DATABASE_ERROR("sql.claims" + " " + "toggleFlag", e.getMessage()));
                     }
                 }
 
-                Inventory modifyFlag = Bukkit.createInventory(null, 54, "Modify Flag - " + meta.getDisplayName());
+                Inventory modifyFlag = Bukkit.createInventory(null, 54, "Modify Flag - " + Claim.Flag.valueOf(flagName).getDislayName());
 
                 ItemStack[] contents = new ItemStack[54];
                 ItemStack partner = new ItemStack(Material.CHAIN);

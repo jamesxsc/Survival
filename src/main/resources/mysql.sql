@@ -16,7 +16,7 @@ CREATE TABLE IF NOT EXISTS claim_flags (
     `flag`          VARCHAR(255)    NOT NULL,
     `auth_level`    VARCHAR(20)     NOT NULL,
     `value`         BIT             NOT NULL,
-    PRIMARY KEY (claim_id, flag),
+    PRIMARY KEY (claim_id, flag, auth_level),
     FOREIGN KEY claim_index (claim_id)
         REFERENCES claims(id)
         ON DELETE CASCADE
