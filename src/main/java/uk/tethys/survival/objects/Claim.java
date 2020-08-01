@@ -147,6 +147,15 @@ public class Claim implements Serializable {
             return defaultWanderer;
         }
 
+        public boolean isDefault(AuthLevel authLevel) {
+            switch (authLevel) {
+                case LOCAL: return isDefaultLocal();
+                case PARTNER: return isDefaultPartner();
+                case WANDERER: return isDefaultWanderer();
+            }
+            throw new IllegalArgumentException("That AuthLevel does not have default values.");
+        }
+
         public enum AuthLevel {
             LANDLORD(1),
             PARTNER(2),
@@ -186,7 +195,9 @@ public class Claim implements Serializable {
         return !(min1.getZ() > max2.getZ() && max1.getZ() > min2.getZ());
     }
 
-    public Set<AccessFlag> getFlags() {
+    public Set<AccessFlag> getFlags() throws IllegalStateException {
+        if (this.id == 0)
+            throw new IllegalStateException("Claim#getFlags() cannot be used as id has not been set!");
         Set<AccessFlag> flags = new HashSet<>();
         try (Connection connection = Survival.INSTANCE.getDBConnection()) {
             ResultSet overlappingClaim = connection.prepareStatement(String.format(
@@ -205,38 +216,71 @@ public class Claim implements Serializable {
         return flags;
     }
 
-    public static Optional<Claim> getClaim(Location location) {
-        try (Connection connection = Survival.INSTANCE.getDBConnection()) {
-            ResultSet claim = connection.prepareStatement(String.format(
-                    "SELECT * FROM claims WHERE `world` = '%s' && ((`x1` <= %d && %d <= `x2`) && (`z1` <= %d && %d <= `z2`)) LIMIT 1",
-                    Objects.requireNonNull(location.getWorld()).getUID().toString(),
-                    location.getBlockX(),
-                    location.getBlockX(),
-                    location.getBlockZ(),
-                    location.getBlockZ()
-            )).executeQuery();
-            boolean inClaim = claim.next();
-            if (inClaim)
-                return Optional.of(new Claim(
-                        UUID.fromString(claim.getString("owner")),
-                        new SerializableLocation(
-                                claim.getInt("x1"),
-                                0,
-                                claim.getInt("z1"),
-                                UUID.fromString(claim.getString("world"))
-                        ),
-                        new SerializableLocation(
-                                claim.getInt("x2"),
-                                0,
-                                claim.getInt("z2"),
-                                UUID.fromString(claim.getString("world"))
-                        ), claim.getInt("id")
-                ));
-            else
-                return Optional.empty();
-        } catch (SQLException e) {
-            return Optional.empty();
+    public void putFlag(AccessFlag flag) throws SQLException, IllegalStateException {
+        if (this.id == 0)
+            throw new IllegalStateException("Claim#putFlag() cannot be used as id has not been set!");
+
+        Connection connection = Survival.INSTANCE.getDBConnection();
+        ResultSet retrievedFlag = connection.prepareStatement(String.format(
+                "SELECT value FROM `claim_flags` WHERE `claim_id` = %d && `flag` = '%s' && `auth_level` = '%s'",
+                this.id,
+                flag.getFlag().name(),
+                flag.getAuthLevel().name()
+        )).executeQuery();
+
+        if (retrievedFlag.next()) {
+            if (retrievedFlag.getBoolean("value") != flag.getValue()) {
+                connection.prepareStatement(String.format(
+                        "UPDATE `claim_flags` SET `value` = %b WHERE `claim_id` = %d && `flag` = '%s' && `auth_level` = '%s'",
+                        flag.getValue(),
+                        this.id,
+                        flag.getFlag().name(),
+                        flag.getAuthLevel().name()
+                )).execute();
+            }
+        } else {
+            connection.prepareStatement(String.format(
+                    "INSERT INTO `claim_flags` (`claim_id`, `flag`, `auth_level`, `value`) VALUES (%d, '%s', '%s', %b)",
+                    this.id,
+                    flag.getFlag().name(),
+                    flag.getAuthLevel().name(),
+                    flag.getValue()
+            )).execute();
         }
+        connection.close();
+    }
+
+    public static Optional<Claim> getClaim(Location location) throws SQLException {
+        Connection connection = Survival.INSTANCE.getDBConnection();
+        ResultSet claim = connection.prepareStatement(String.format(
+                "SELECT * FROM claims WHERE `world` = '%s' && ((`x1` <= %d && %d <= `x2`) && (`z1` <= %d && %d <= `z2`)) LIMIT 1",
+                Objects.requireNonNull(location.getWorld()).getUID().toString(),
+                location.getBlockX(),
+                location.getBlockX(),
+                location.getBlockZ(),
+                location.getBlockZ()
+        )).executeQuery();
+        connection.close();
+        boolean inClaim = claim.next();
+        if (inClaim)
+            return Optional.of(new Claim(
+                    UUID.fromString(claim.getString("owner")),
+                    new SerializableLocation(
+                            claim.getInt("x1"),
+                            0,
+                            claim.getInt("z1"),
+                            UUID.fromString(claim.getString("world"))
+                    ),
+                    new SerializableLocation(
+                            claim.getInt("x2"),
+                            0,
+                            claim.getInt("z2"),
+                            UUID.fromString(claim.getString("world"))
+                    ), claim.getInt("id")
+            ));
+        else
+            return Optional.empty();
+
     }
 
 }

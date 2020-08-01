@@ -21,12 +21,14 @@ public class ClaimCommand implements CommandExecutor {
     public static NamespacedKey IS_CLAIM_TOOL;
     public static NamespacedKey CLAIM_TOOL_MODE;
     public static NamespacedKey CLAIM_FLAG_NAME;
+    public static NamespacedKey CLAIM_FLAG_AUTH_LEVEL;
 
     public ClaimCommand(Survival plugin) {
         this.plugin = plugin;
         IS_CLAIM_TOOL = new NamespacedKey(plugin, "is-claim-tool");
         CLAIM_TOOL_MODE = new NamespacedKey(plugin, "claim-tool-mode");
         CLAIM_FLAG_NAME = new NamespacedKey(plugin, "claim-flag-name");
+        CLAIM_FLAG_AUTH_LEVEL = new NamespacedKey(plugin, "claim-flag-auth-level");
     }
 
     @SuppressWarnings("ConstantConditions")

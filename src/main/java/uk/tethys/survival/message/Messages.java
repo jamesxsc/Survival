@@ -32,8 +32,8 @@ public class Messages {
         return "balance is " + balance;
     }
 
-    public static String RETRIEVE_ERROR(String val, String error) {
-        return "error retrieving";
+    public static String DATABASE_ERROR(String val, String error) {
+        return "error with database : " + val;
     }
 
     public static String UNLOCK_ITEM(ItemStack itemStack) {

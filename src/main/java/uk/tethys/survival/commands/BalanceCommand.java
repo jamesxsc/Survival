@@ -31,7 +31,7 @@ public class BalanceCommand implements CommandExecutor {
 
                 player.sendMessage(Messages.SELF_BALANCE(balance));
             } catch (SQLException e) {
-                player.sendMessage(Messages.RETRIEVE_ERROR("sql.balances.balance", e.getMessage()));
+                player.sendMessage(Messages.DATABASE_ERROR("sql.balances.balance", e.getMessage()));
             }
         }
         return true;

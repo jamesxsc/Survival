@@ -53,7 +53,7 @@ public class CentralShopListener implements Listener {
 
             event.getEntity().sendMessage(Messages.UNLOCK_ITEM(event.getItem().getItemStack()));
         } catch (SQLException e) {
-            event.getEntity().sendMessage(Messages.RETRIEVE_ERROR("sql.unlocked_items", e.getMessage()));
+            event.getEntity().sendMessage(Messages.DATABASE_ERROR("sql.unlocked_items", e.getMessage()));
         }
     }
 

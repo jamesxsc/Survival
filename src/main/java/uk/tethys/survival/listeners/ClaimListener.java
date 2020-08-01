@@ -38,7 +38,6 @@ import uk.tethys.survival.commands.ClaimCommand;
 import uk.tethys.survival.message.Messages;
 import uk.tethys.survival.objects.Claim;
 import uk.tethys.survival.tasks.ClaimTask;
-import uk.tethys.survival.util.SerializableLocation;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -181,7 +180,7 @@ public class ClaimListener implements Listener {
                             )));
                 }
             } catch (SQLException e) {
-                player.sendMessage(Messages.RETRIEVE_ERROR("sql.claims", e.getMessage()));
+                player.sendMessage(Messages.DATABASE_ERROR("sql.claims", e.getMessage()));
                 plugin.getLogger().severe("Error obtaining overlapping claims from DB");
                 e.printStackTrace();
             }
@@ -250,12 +249,16 @@ public class ClaimListener implements Listener {
     }
 
     private void handleFlag(Player player) {
-        if (Claim.getClaim(player.getLocation()).isPresent()) {
-            Inventory selectFlag = Bukkit.createInventory(null, 54, "Select Flag to Modify");
-            selectFlag.setContents(getSelectFlagContents());
-            player.openInventory(selectFlag);
-        } else {
-            player.sendMessage(Messages.NOT_IN_CLAIM);
+        try {
+            if (Claim.getClaim(player.getLocation()).isPresent()) {
+                Inventory selectFlag = Bukkit.createInventory(null, 54, "Select Flag to Modify");
+                selectFlag.setContents(getSelectFlagContents());
+                player.openInventory(selectFlag);
+            } else {
+                player.sendMessage(Messages.NOT_IN_CLAIM);
+            }
+        } catch (SQLException e) {
+            player.sendMessage(Messages.DATABASE_ERROR("sql.claims", e.getMessage()));
         }
     }
 
@@ -313,14 +316,43 @@ public class ClaimListener implements Listener {
             ItemMeta meta = itemStack.getItemMeta();
 
             if (meta.getPersistentDataContainer().has(ClaimCommand.CLAIM_FLAG_NAME, PersistentDataType.STRING)) {
+
                 final String flagName = meta.getPersistentDataContainer().get(ClaimCommand.CLAIM_FLAG_NAME, PersistentDataType.STRING);
 
-                Optional<Claim> claimOptional = Claim.getClaim(player.getLocation());
+                Optional<Claim> claimOptional = Optional.empty();
+                try {
+                    claimOptional = Claim.getClaim(player.getLocation());
+                } catch (SQLException e) {
+                    player.closeInventory();
+                    player.sendMessage(Messages.DATABASE_ERROR("sql.claims", e.getMessage()));
+                }
 
                 if (!claimOptional.isPresent())
                     return true;
 
                 Claim claim = claimOptional.get();
+
+                if (meta.getPersistentDataContainer().has(ClaimCommand.CLAIM_FLAG_AUTH_LEVEL, PersistentDataType.STRING)) {
+                    final String authLevelName = meta.getPersistentDataContainer().get(ClaimCommand.CLAIM_FLAG_AUTH_LEVEL, PersistentDataType.STRING);
+
+                    Claim.Flag.AuthLevel authLevel = Claim.Flag.AuthLevel.valueOf(authLevelName);
+
+                    try {
+                        claim.putFlag(new Claim.AccessFlag(
+                                Claim.Flag.valueOf(flagName),
+                                authLevel,
+                                !(claim.getFlags().stream().filter(
+                                        af -> af.getFlag().name().equals(flagName)
+                                                && af.getAuthLevel() == authLevel).findFirst()
+                                        .orElseGet(() -> new Claim.AccessFlag(Claim.Flag.valueOf(flagName)
+                                                .isDefault(authLevel))).getValue())
+                        ));
+
+                    } catch (SQLException e) {
+                        player.closeInventory();
+                        player.sendMessage(Messages.DATABASE_ERROR("sql.claims", e.getMessage()));
+                    }
+                }
 
                 Inventory modifyFlag = Bukkit.createInventory(null, 54, "Modify Flag - " + meta.getDisplayName());
 
@@ -331,8 +363,11 @@ public class ClaimListener implements Listener {
                 partnerMeta.setDisplayName(ChatColor.RESET + "Partner");
                 boolean partnerAllowed = claim.getFlags().stream().filter(
                         af -> af.getFlag().name().equals(flagName)
-                                && af.getAuthLevel().name().equals("partner")).findFirst()
+                                && af.getAuthLevel() == Claim.Flag.AuthLevel.PARTNER).findFirst()
                         .orElseGet(() -> new Claim.AccessFlag(Claim.Flag.valueOf(flagName).isDefaultPartner())).getValue();
+                PersistentDataContainer partnerPDC = partnerMeta.getPersistentDataContainer();
+                partnerPDC.set(ClaimCommand.CLAIM_FLAG_NAME, PersistentDataType.STRING, flagName);
+                partnerPDC.set(ClaimCommand.CLAIM_FLAG_AUTH_LEVEL, PersistentDataType.STRING, "PARTNER");
                 partnerMeta.setLore(Arrays.asList("Currently " + (partnerAllowed ? "allowed" : "denied"), "Click to toggle"));
 
                 partner.setItemMeta(partnerMeta);
@@ -343,8 +378,11 @@ public class ClaimListener implements Listener {
                 localMeta.setDisplayName(ChatColor.RESET + "Local");
                 boolean localAllowed = claim.getFlags().stream().filter(
                         af -> af.getFlag().name().equals(flagName)
-                                && af.getAuthLevel().name().equals("local")).findFirst()
+                                && af.getAuthLevel() == Claim.Flag.AuthLevel.LOCAL).findFirst()
                         .orElseGet(() -> new Claim.AccessFlag(Claim.Flag.valueOf(flagName).isDefaultLocal())).getValue();
+                PersistentDataContainer localPDC = localMeta.getPersistentDataContainer();
+                localPDC.set(ClaimCommand.CLAIM_FLAG_NAME, PersistentDataType.STRING, flagName);
+                localPDC.set(ClaimCommand.CLAIM_FLAG_AUTH_LEVEL, PersistentDataType.STRING, "LOCAL");
                 localMeta.setLore(Arrays.asList("Currently " + (localAllowed ? "allowed" : "denied"), "Click to toggle"));
 
 
@@ -356,13 +394,27 @@ public class ClaimListener implements Listener {
                 wandererMeta.setDisplayName(ChatColor.RESET + "Wanderer");
                 boolean wandererAllowed = claim.getFlags().stream().filter(
                         af -> af.getFlag().name().equals(flagName)
-                                && af.getAuthLevel().name().equals("wanderer")).findFirst()
+                                && af.getAuthLevel() == Claim.Flag.AuthLevel.WANDERER).findFirst()
                         .orElseGet(() -> new Claim.AccessFlag(Claim.Flag.valueOf(flagName).isDefaultWanderer())).getValue();
+                PersistentDataContainer wandererPDC = wandererMeta.getPersistentDataContainer();
+                wandererPDC.set(ClaimCommand.CLAIM_FLAG_NAME, PersistentDataType.STRING, flagName);
+                wandererPDC.set(ClaimCommand.CLAIM_FLAG_AUTH_LEVEL, PersistentDataType.STRING, "WANDERER");
                 wandererMeta.setLore(Arrays.asList("Currently " + (wandererAllowed ? "allowed" : "denied"), "Click to toggle"));
-
 
                 wanderer.setItemMeta(wandererMeta);
                 contents[9 * 2 + 5] = wanderer;
+
+                ItemStack fill = new ItemStack(Material.BLACK_STAINED_GLASS_PANE);
+                ItemMeta fillMeta = fill.getItemMeta();
+                fillMeta.setDisplayName(ChatColor.BLACK + "" + ChatColor.MAGIC + "xxx");
+                fillMeta.setLocalizedName("survival.internal.fill");
+                fill.setItemMeta(fillMeta);
+
+                for (int j = 0; j < contents.length; j++) {
+                    if (contents[j] == null) {
+                        contents[j] = fill;
+                    }
+                }
 
                 modifyFlag.setContents(contents);
 
