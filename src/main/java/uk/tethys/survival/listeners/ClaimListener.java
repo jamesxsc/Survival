@@ -446,7 +446,7 @@ public class ClaimListener implements Listener {
     // check for unauthorised breaking of blocks
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onBreak(BlockBreakEvent event) {
-        if (isDenied(event.getPlayer(), event.getBlock().getLocation(), BlockBreakEvent.class)) {
+        if (isDenied(event.getPlayer(), event.getBlock().getLocation(), "BREAK")) {
             event.setCancelled(true);
         }
     }
@@ -457,7 +457,7 @@ public class ClaimListener implements Listener {
         if (event.getBlock().getType() == Material.SHULKER_BOX) {
             //todo shulker box logic
         } else {
-            if (isDenied(event.getPlayer(), event.getBlockAgainst().getLocation(), BlockPlaceEvent.class)) {
+            if (isDenied(event.getPlayer(), event.getBlockAgainst().getLocation(), "PLACE")) {
                 event.setCancelled(true);
             }
         }
@@ -468,7 +468,7 @@ public class ClaimListener implements Listener {
     public void onOpen(PlayerInteractEvent event) {
         if (event.getClickedBlock() != null &&
                 event.getClickedBlock().getState() instanceof Container &&
-                isDenied(event.getPlayer(), event.getClickedBlock().getLocation(), PlayerInteractEvent.class)) { // todo do we need to further refine queries of this event to seperate permissions between eg containers and redstone?
+                isDenied(event.getPlayer(), event.getClickedBlock().getLocation(), "")) {
             event.setCancelled(true);
         }
     }
@@ -478,7 +478,7 @@ public class ClaimListener implements Listener {
     public void onRedstoneUse(PlayerInteractEvent event) {
         if (event.getClickedBlock() != null &&
                 event.getClickedBlock().getBlockData() instanceof Powerable &&
-                isDenied(event.getPlayer(), event.getClickedBlock().getLocation(), PlayerInteractEvent.class)) {
+                isDenied(event.getPlayer(), event.getClickedBlock().getLocation(), "")) {
             event.setCancelled(true);
         }
     }
@@ -486,7 +486,7 @@ public class ClaimListener implements Listener {
     // prevent unauthorised triggering of raids
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onBreak(RaidTriggerEvent event) {
-        if (isDenied(event.getPlayer(), event.getRaid().getLocation(), RaidTriggerEvent.class)) {
+        if (isDenied(event.getPlayer(), event.getRaid().getLocation(), "")) {
             event.setCancelled(true);
         }
     }
@@ -495,7 +495,7 @@ public class ClaimListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onDestroy(VehicleDestroyEvent event) {
         if (event.getAttacker() instanceof Player &&
-                isDenied((Player) event.getAttacker(), event.getVehicle().getLocation(), VehicleDestroyEvent.class)) {
+                isDenied((Player) event.getAttacker(), event.getVehicle().getLocation(), "")) {
             event.setCancelled(true);
         }
     }
@@ -504,7 +504,7 @@ public class ClaimListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onEnter(VehicleEnterEvent event) {
         if (event.getEntered() instanceof Player &&
-                isDenied((Player) event.getEntered(), event.getVehicle().getLocation(), VehicleEnterEvent.class)) {
+                isDenied((Player) event.getEntered(), event.getVehicle().getLocation(), "")) {
             event.setCancelled(true);
         }
     }
@@ -513,7 +513,7 @@ public class ClaimListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onDamage(EntityDamageByEntityEvent event) {
         if (event.getDamager() instanceof Player &&
-                isDenied((Player) event.getDamager(), event.getEntity().getLocation(), EntityDamageByEntityEvent.class)) {
+                isDenied((Player) event.getDamager(), event.getEntity().getLocation(), "")) {
             event.setCancelled(true);
         }
     }
@@ -521,7 +521,7 @@ public class ClaimListener implements Listener {
     // check for book robbery
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onTake(PlayerTakeLecternBookEvent event) {
-        if (isDenied(event.getPlayer(), event.getLectern().getLocation(), PlayerTakeLecternBookEvent.class)) {
+        if (isDenied(event.getPlayer(), event.getLectern().getLocation(), "")) {
             event.setCancelled(true);
         }
     }
@@ -529,7 +529,7 @@ public class ClaimListener implements Listener {
     // check for unauthorised bed usage
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onEnter(PlayerBedEnterEvent event) {
-        if (isDenied(event.getPlayer(), event.getBed().getLocation(), PlayerBedEnterEvent.class)) {
+        if (isDenied(event.getPlayer(), event.getBed().getLocation(), "")) {
             event.setCancelled(true);
         }
     }
@@ -537,7 +537,7 @@ public class ClaimListener implements Listener {
     // check for fluid robbery
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onFill(PlayerBucketFillEvent event) {
-        if (isDenied(event.getPlayer(), event.getBlock().getLocation(), PlayerBucketFillEvent.class)) {
+        if (isDenied(event.getPlayer(), event.getBlock().getLocation(), "")) {
             event.setCancelled(true);
         }
     }
@@ -545,7 +545,7 @@ public class ClaimListener implements Listener {
     // check for unauthorised entity interactions
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onInteract(PlayerInteractEntityEvent event) {
-        if (isDenied(event.getPlayer(), event.getRightClicked().getLocation(), PlayerInteractEntityEvent.class)) {
+        if (isDenied(event.getPlayer(), event.getRightClicked().getLocation(), "")) {
             event.setCancelled(true);
         }
     }
@@ -553,7 +553,7 @@ public class ClaimListener implements Listener {
     // check for unauthorised leashing
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onLeash(PlayerLeashEntityEvent event) {
-        if (isDenied(event.getPlayer(), event.getEntity().getLocation(), PlayerLeashEntityEvent.class)) {
+        if (isDenied(event.getPlayer(), event.getEntity().getLocation(), "")) {
             event.setCancelled(true);
         }
     }
@@ -561,7 +561,7 @@ public class ClaimListener implements Listener {
     // check for unauthorised shearing
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onShear(PlayerShearEntityEvent event) {
-        if (isDenied(event.getPlayer(), event.getEntity().getLocation(), PlayerShearEntityEvent.class)) {
+        if (isDenied(event.getPlayer(), event.getEntity().getLocation(), "")) {
             event.setCancelled(true);
         }
     }
@@ -572,28 +572,47 @@ public class ClaimListener implements Listener {
         // todo we will use this to catch exceptions found in beta testing should they not warrant their own method
     }
 
-    private boolean isDenied(Player player, Location location, Class<? extends Event> eventType) {
-        try (Connection connection = plugin.getDBConnection()) {
-            ResultSet overlappingClaim = connection.prepareStatement(String.format(
-                    "SELECT `owner`, `id` FROM claims WHERE `world` = '%s' && ((`x1` <= %d && %d <= `x2`) && (`z1` <= %d && %d <= `z2`)) LIMIT 1",
-                    Objects.requireNonNull(location.getWorld()).getUID().toString(),
-                    location.getBlockX(),
-                    location.getBlockX(),
-                    location.getBlockZ(),
-                    location.getBlockZ()
-            )).executeQuery();
-            boolean inClaim = overlappingClaim.next();
-            if (inClaim)
-                player.sendMessage(ChatColor.AQUA + "Rejected by system. With EventType of " + eventType.getCanonicalName() + ChatColor.LIGHT_PURPLE + " In claim owned by " + overlappingClaim.getString("owner"));
-            return inClaim;
+    private boolean isDenied(Player player, Location location, String flagName) {
+        Optional<Claim> claimOptional;
+        try {
+            claimOptional = Claim.getClaim(location);
         } catch (SQLException e) {
             player.sendMessage(Messages.DENIED_DUE_TO_DB_FAIL);
-            plugin.getLogger().severe("Error obtaining overlapping claim from DB");
+            plugin.getLogger().severe("Error obtaining player auth level from DB");
             e.printStackTrace();
             // ensure that if there's an issue we don't allow griefing
             return true;
         }
-        //todo flags
+
+        if (claimOptional.isPresent()) {
+
+                // if the player owns the claim they have access
+                if (claimOptional.get().getOwner().equals(player.getUniqueId()))
+                    return false;
+
+                Claim.Flag.AuthLevel authLevel;
+                try {
+                    authLevel = claimOptional.get().getPlayerAuthLevel(player);
+                } catch (SQLException e) {
+                    player.sendMessage(Messages.DENIED_DUE_TO_DB_FAIL);
+                    plugin.getLogger().severe("Error obtaining player auth level from DB");
+                    e.printStackTrace();
+                    // ensure that if there's an issue we don't allow griefing
+                    return true;
+                }
+
+                // search db flag overrides
+                for (Claim.AccessFlag flag : claimOptional.get().getFlags()) {
+                    if (flag.getFlag().name().equals(flagName) && flag.getAuthLevel().equals(authLevel)) {
+                        return !flag.getValue();
+                    }
+                }
+
+                // if the flag is not stored we need to use the default
+                return Claim.Flag.valueOf(flagName).isDefault(authLevel);
+            } else {
+                return false;
+            }
     }
 
 }

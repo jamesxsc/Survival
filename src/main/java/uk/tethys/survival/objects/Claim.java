@@ -253,6 +253,21 @@ public class Claim implements Serializable {
         }
     }
 
+    public Flag.AuthLevel getPlayerAuthLevel(Player player) throws SQLException, IllegalStateException {
+        if (this.id == 0)
+            throw new IllegalStateException("Claim#getPlayerAuthLevel() cannot be used as id has not been set!");
+
+        try (Connection connection = Survival.INSTANCE.getDBConnection()) {
+            ResultSet resultSet = connection.prepareStatement(String.format(
+                    "SELECT `auth_level` FROM `claim_access` WHERE `claim_id` = %d && `player` = '%s'",
+                    this.id,
+                    player.getUniqueId().toString()
+            )).executeQuery();
+
+            return Flag.AuthLevel.valueOf(resultSet.getString(1));
+        }
+    }
+
     public static Optional<Claim> getClaim(Location location) throws SQLException {
         try (Connection connection = Survival.INSTANCE.getDBConnection()) {
             ResultSet claim = connection.prepareStatement(String.format(
