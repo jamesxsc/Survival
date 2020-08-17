@@ -8,7 +8,6 @@ import org.bukkit.block.Container;
 import org.bukkit.block.data.Powerable;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Slime;
-import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -16,6 +15,7 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.PlayerLeashEntityEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryMoveItemEvent;
@@ -34,7 +34,6 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scoreboard.Team;
 import uk.tethys.survival.Survival;
-import uk.tethys.survival.commands.ClaimCommand;
 import uk.tethys.survival.message.Messages;
 import uk.tethys.survival.objects.Claim;
 import uk.tethys.survival.tasks.ClaimTask;
@@ -57,17 +56,22 @@ public class ClaimListener implements Listener {
     private final Map<UUID, Location> claimCorners;
     private final Map<UUID, Integer> particleTasks;
 
-    @SuppressWarnings("ConstantConditions")
     @EventHandler
     public void onInteract(PlayerInteractEvent event) {
         if (event.getHand() != EquipmentSlot.HAND) return;
+
         Action action = event.getAction();
         if (action != Action.RIGHT_CLICK_BLOCK && action != Action.RIGHT_CLICK_AIR) return;
+
         Player player = event.getPlayer();
         ItemStack item = event.getItem();
         if (item != null && item.getItemMeta() != null
-                && (item.getItemMeta().getPersistentDataContainer().get(ClaimCommand.IS_CLAIM_TOOL, PersistentDataType.BYTE) == (byte) 1)) {
-            switch (item.getItemMeta().getPersistentDataContainer().get(ClaimCommand.CLAIM_TOOL_MODE, PersistentDataType.STRING)) {
+                && (item.getItemMeta().getPersistentDataContainer().has(Claim.IS_CLAIM_TOOL, PersistentDataType.BYTE))
+                && (item.getItemMeta().getPersistentDataContainer().get(Claim.IS_CLAIM_TOOL, PersistentDataType.BYTE) != null)
+        ) {
+            if (!item.getItemMeta().getPersistentDataContainer().has(Claim.CLAIM_TOOL_MODE, PersistentDataType.STRING))
+                return;
+            switch (item.getItemMeta().getPersistentDataContainer().get(Claim.CLAIM_TOOL_MODE, PersistentDataType.STRING)) {
                 case "claim":
                     handleClaim(player, event.getClickedBlock(), action);
                     break;
@@ -76,11 +80,14 @@ public class ClaimListener implements Listener {
                 case "flag":
                     handleFlag(player);
                     break;
+                default:
+                    return;
             }
+            event.setCancelled(true);
         }
     }
 
-    private static LinkedList<String> modes = new LinkedList<String>() {{
+    private static final LinkedList<String> modes = new LinkedList<String>() {{
         add("claim");
         add("view");
         add("flag");
@@ -92,17 +99,19 @@ public class ClaimListener implements Listener {
             ItemStack itemStack = event.getItem();
             if (itemStack != null && itemStack.getItemMeta() != null) {
                 ItemMeta meta = itemStack.getItemMeta();
-                if (meta.getPersistentDataContainer().has(ClaimCommand.IS_CLAIM_TOOL, PersistentDataType.BYTE) &&
-                        meta.getPersistentDataContainer().get(ClaimCommand.IS_CLAIM_TOOL, PersistentDataType.BYTE) == (byte) 1) {
-                    String currentMode = meta.getPersistentDataContainer().get(ClaimCommand.CLAIM_TOOL_MODE, PersistentDataType.STRING);
+                if (meta.getPersistentDataContainer().has(Claim.IS_CLAIM_TOOL, PersistentDataType.BYTE) &&
+                        meta.getPersistentDataContainer().get(Claim.IS_CLAIM_TOOL, PersistentDataType.BYTE) == (byte) 1) {
+                    String currentMode = meta.getPersistentDataContainer().get(Claim.CLAIM_TOOL_MODE, PersistentDataType.STRING);
                     String newMode;
                     int index = modes.indexOf(currentMode);
                     if (index + 1 == modes.size())
                         newMode = modes.get(0);
                     else
                         newMode = modes.get(index + 1);
-                    meta.getPersistentDataContainer().set(ClaimCommand.CLAIM_TOOL_MODE, PersistentDataType.STRING, newMode);
+                    meta.getPersistentDataContainer().set(Claim.CLAIM_TOOL_MODE, PersistentDataType.STRING, newMode);
                     itemStack.setItemMeta(meta);
+
+                    event.setCancelled(true);
 
                     event.getPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(Messages.CLAIM_TOOL_MODE(newMode)));
                 }
@@ -150,10 +159,10 @@ public class ClaimListener implements Listener {
             }
 
 
-            double new1X = Math.min(corner1.getX(), corner2.getX());
-            double new1Z = Math.min(corner1.getZ(), corner2.getZ());
-            double new2X = Math.max(corner1.getX(), corner2.getX());
-            double new2Z = Math.max(corner1.getZ(), corner2.getZ());
+            int new1X = Math.min(corner1.getBlockX(), corner2.getBlockX());
+            int new1Z = Math.min(corner1.getBlockZ(), corner2.getBlockZ());
+            int new2X = Math.max(corner1.getBlockX(), corner2.getBlockX());
+            int new2Z = Math.max(corner1.getBlockZ(), corner2.getBlockZ());
 
             corner1.setX(new1X);
             corner1.setZ(new1Z);
@@ -201,7 +210,11 @@ public class ClaimListener implements Listener {
                 ChatColor color = ChatColor.values()[(int) (System.currentTimeMillis() % ChatColor.values().length)];
 
                 Location c1 = c.getCorner1().getLocation();
+                c1.setX(c1.getBlockX() + .5);
+                c1.setZ(c1.getBlockZ() + .5);
                 Location c2 = c.getCorner2().getLocation();
+                c2.setX(c2.getBlockX() + .5);
+                c2.setZ(c2.getBlockZ() + .5);
                 c1.setY(playerY);
                 c2.setY(playerY);
                 Location c3 = new Location(world, c1.getX(), playerY, c2.getZ());
@@ -223,9 +236,8 @@ public class ClaimListener implements Listener {
                     team.addEntry(slime.getUniqueId().toString());
                     slime.setGlowing(true);
                     slime.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 1000000, 2, true, false));
-
-                    //todo eventhandle this
                     slime.setInvulnerable(true);
+                    slime.getPersistentDataContainer().set(Claim.CLAIM_SLIME_IDENTIFIER, PersistentDataType.BYTE, (byte) 1);
                 }
 
             }
@@ -242,6 +254,15 @@ public class ClaimListener implements Listener {
                 player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BIT, 1.0f, .7f);
                 player.sendMessage(Messages.CLAIM_CREATE_FAIL);
             }
+        }
+    }
+
+    @EventHandler
+    public void onDamageIndicator(EntityDamageEvent event) {
+        PersistentDataContainer pdc = event.getEntity().getPersistentDataContainer();
+
+        if (pdc.has(Claim.CLAIM_SLIME_IDENTIFIER, PersistentDataType.BYTE)) {
+            event.setCancelled(true);
         }
     }
 
@@ -271,7 +292,7 @@ public class ClaimListener implements Listener {
             ItemMeta meta = selectFlag.getItemMeta();
             meta.setDisplayName(ChatColor.RESET + flag.getDislayName());
             PersistentDataContainer container = meta.getPersistentDataContainer();
-            container.set(ClaimCommand.CLAIM_FLAG_NAME, PersistentDataType.STRING, flag.name());
+            container.set(Claim.CLAIM_FLAG_NAME, PersistentDataType.STRING, flag.name());
             selectFlag.setItemMeta(meta);
 
             if (i > 54)
@@ -316,9 +337,9 @@ public class ClaimListener implements Listener {
         if (itemStack != null && itemStack.getItemMeta() != null) {
             ItemMeta meta = itemStack.getItemMeta();
 
-            if (meta.getPersistentDataContainer().has(ClaimCommand.CLAIM_FLAG_NAME, PersistentDataType.STRING)) {
+            if (meta.getPersistentDataContainer().has(Claim.CLAIM_FLAG_NAME, PersistentDataType.STRING)) {
 
-                final String flagName = meta.getPersistentDataContainer().get(ClaimCommand.CLAIM_FLAG_NAME, PersistentDataType.STRING);
+                final String flagName = meta.getPersistentDataContainer().get(Claim.CLAIM_FLAG_NAME, PersistentDataType.STRING);
 
                 Optional<Claim> claimOptional = Optional.empty();
                 try {
@@ -333,8 +354,8 @@ public class ClaimListener implements Listener {
 
                 Claim claim = claimOptional.get();
 
-                if (meta.getPersistentDataContainer().has(ClaimCommand.CLAIM_FLAG_AUTH_LEVEL, PersistentDataType.STRING)) {
-                    final String authLevelName = meta.getPersistentDataContainer().get(ClaimCommand.CLAIM_FLAG_AUTH_LEVEL, PersistentDataType.STRING);
+                if (meta.getPersistentDataContainer().has(Claim.CLAIM_FLAG_AUTH_LEVEL, PersistentDataType.STRING)) {
+                    final String authLevelName = meta.getPersistentDataContainer().get(Claim.CLAIM_FLAG_AUTH_LEVEL, PersistentDataType.STRING);
 
                     Claim.Flag.AuthLevel authLevel = Claim.Flag.AuthLevel.valueOf(authLevelName);
 
@@ -368,8 +389,8 @@ public class ClaimListener implements Listener {
                                 && af.getAuthLevel() == Claim.Flag.AuthLevel.PARTNER).findFirst()
                         .orElseGet(() -> new Claim.AccessFlag(Claim.Flag.valueOf(flagName).isDefaultPartner())).getValue();
                 PersistentDataContainer partnerPDC = partnerMeta.getPersistentDataContainer();
-                partnerPDC.set(ClaimCommand.CLAIM_FLAG_NAME, PersistentDataType.STRING, flagName);
-                partnerPDC.set(ClaimCommand.CLAIM_FLAG_AUTH_LEVEL, PersistentDataType.STRING, "PARTNER");
+                partnerPDC.set(Claim.CLAIM_FLAG_NAME, PersistentDataType.STRING, flagName);
+                partnerPDC.set(Claim.CLAIM_FLAG_AUTH_LEVEL, PersistentDataType.STRING, "PARTNER");
                 partnerMeta.setLore(Arrays.asList("Currently " + (partnerAllowed ? "allowed" : "denied"), "Click to toggle"));
 
                 partner.setItemMeta(partnerMeta);
@@ -383,8 +404,8 @@ public class ClaimListener implements Listener {
                                 && af.getAuthLevel() == Claim.Flag.AuthLevel.LOCAL).findFirst()
                         .orElseGet(() -> new Claim.AccessFlag(Claim.Flag.valueOf(flagName).isDefaultLocal())).getValue();
                 PersistentDataContainer localPDC = localMeta.getPersistentDataContainer();
-                localPDC.set(ClaimCommand.CLAIM_FLAG_NAME, PersistentDataType.STRING, flagName);
-                localPDC.set(ClaimCommand.CLAIM_FLAG_AUTH_LEVEL, PersistentDataType.STRING, "LOCAL");
+                localPDC.set(Claim.CLAIM_FLAG_NAME, PersistentDataType.STRING, flagName);
+                localPDC.set(Claim.CLAIM_FLAG_AUTH_LEVEL, PersistentDataType.STRING, "LOCAL");
                 localMeta.setLore(Arrays.asList("Currently " + (localAllowed ? "allowed" : "denied"), "Click to toggle"));
 
 
@@ -399,8 +420,8 @@ public class ClaimListener implements Listener {
                                 && af.getAuthLevel() == Claim.Flag.AuthLevel.WANDERER).findFirst()
                         .orElseGet(() -> new Claim.AccessFlag(Claim.Flag.valueOf(flagName).isDefaultWanderer())).getValue();
                 PersistentDataContainer wandererPDC = wandererMeta.getPersistentDataContainer();
-                wandererPDC.set(ClaimCommand.CLAIM_FLAG_NAME, PersistentDataType.STRING, flagName);
-                wandererPDC.set(ClaimCommand.CLAIM_FLAG_AUTH_LEVEL, PersistentDataType.STRING, "WANDERER");
+                wandererPDC.set(Claim.CLAIM_FLAG_NAME, PersistentDataType.STRING, flagName);
+                wandererPDC.set(Claim.CLAIM_FLAG_AUTH_LEVEL, PersistentDataType.STRING, "WANDERER");
                 wandererMeta.setLore(Arrays.asList("Currently " + (wandererAllowed ? "allowed" : "denied"), "Click to toggle"));
 
                 wanderer.setItemMeta(wandererMeta);
@@ -454,12 +475,8 @@ public class ClaimListener implements Listener {
     // check for unauthorised placing of blocks
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlace(BlockPlaceEvent event) {
-        if (event.getBlock().getType() == Material.SHULKER_BOX) {
-            //todo shulker box logic
-        } else {
-            if (isDenied(event.getPlayer(), event.getBlockAgainst().getLocation(), "PLACE")) {
-                event.setCancelled(true);
-            }
+        if (isDenied(event.getPlayer(), event.getBlockPlaced().getLocation(), "PLACE")) {
+            event.setCancelled(true);
         }
     }
 
@@ -572,13 +589,13 @@ public class ClaimListener implements Listener {
         // todo we will use this to catch exceptions found in beta testing should they not warrant their own method
     }
 
-    private boolean isDenied(Player player, Location location, String flagName) {
+    public static boolean isDenied(Player player, Location location, String flagName) {
         Optional<Claim> claimOptional;
         try {
             claimOptional = Claim.getClaim(location);
         } catch (SQLException e) {
             player.sendMessage(Messages.DENIED_DUE_TO_DB_FAIL);
-            plugin.getLogger().severe("Error obtaining player auth level from DB");
+            Survival.INSTANCE.getLogger().severe("Error obtaining player auth level from DB");
             e.printStackTrace();
             // ensure that if there's an issue we don't allow griefing
             return true;
@@ -586,33 +603,33 @@ public class ClaimListener implements Listener {
 
         if (claimOptional.isPresent()) {
 
-                // if the player owns the claim they have access
-                if (claimOptional.get().getOwner().equals(player.getUniqueId()))
-                    return false;
-
-                Claim.Flag.AuthLevel authLevel;
-                try {
-                    authLevel = claimOptional.get().getPlayerAuthLevel(player);
-                } catch (SQLException e) {
-                    player.sendMessage(Messages.DENIED_DUE_TO_DB_FAIL);
-                    plugin.getLogger().severe("Error obtaining player auth level from DB");
-                    e.printStackTrace();
-                    // ensure that if there's an issue we don't allow griefing
-                    return true;
-                }
-
-                // search db flag overrides
-                for (Claim.AccessFlag flag : claimOptional.get().getFlags()) {
-                    if (flag.getFlag().name().equals(flagName) && flag.getAuthLevel().equals(authLevel)) {
-                        return !flag.getValue();
-                    }
-                }
-
-                // if the flag is not stored we need to use the default
-                return Claim.Flag.valueOf(flagName).isDefault(authLevel);
-            } else {
+            // if the player owns the claim they have access
+            if (claimOptional.get().getOwner().equals(player.getUniqueId()))
                 return false;
+
+            Claim.Flag.AuthLevel authLevel;
+            try {
+                authLevel = claimOptional.get().getPlayerAuthLevel(player);
+            } catch (SQLException e) {
+                player.sendMessage(Messages.DENIED_DUE_TO_DB_FAIL);
+                Survival.INSTANCE.getLogger().severe("Error obtaining player auth level from DB");
+                e.printStackTrace();
+                // ensure that if there's an issue we don't allow griefing
+                return true;
             }
+
+            // search db flag overrides
+            for (Claim.AccessFlag flag : claimOptional.get().getFlags()) {
+                if (flag.getFlag().name().equals(flagName) && flag.getAuthLevel().equals(authLevel)) {
+                    return !flag.getValue();
+                }
+            }
+
+            // if the flag is not stored we need to use the default
+            return !Claim.Flag.valueOf(flagName).isDefault(authLevel);
+        } else {
+            return false;
+        }
     }
 
 }

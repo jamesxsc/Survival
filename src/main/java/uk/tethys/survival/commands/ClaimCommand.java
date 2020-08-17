@@ -13,22 +13,19 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 import uk.tethys.survival.Survival;
 import uk.tethys.survival.message.Messages;
+import uk.tethys.survival.objects.Claim;
 
 public class ClaimCommand implements CommandExecutor {
 
     private final Survival plugin;
 
-    public static NamespacedKey IS_CLAIM_TOOL;
-    public static NamespacedKey CLAIM_TOOL_MODE;
-    public static NamespacedKey CLAIM_FLAG_NAME;
-    public static NamespacedKey CLAIM_FLAG_AUTH_LEVEL;
-
     public ClaimCommand(Survival plugin) {
         this.plugin = plugin;
-        IS_CLAIM_TOOL = new NamespacedKey(plugin, "is-claim-tool");
-        CLAIM_TOOL_MODE = new NamespacedKey(plugin, "claim-tool-mode");
-        CLAIM_FLAG_NAME = new NamespacedKey(plugin, "claim-flag-name");
-        CLAIM_FLAG_AUTH_LEVEL = new NamespacedKey(plugin, "claim-flag-auth-level");
+        Claim.IS_CLAIM_TOOL = new NamespacedKey(plugin, "is-claim-tool");
+        Claim.CLAIM_TOOL_MODE = new NamespacedKey(plugin, "claim-tool-mode");
+        Claim.CLAIM_FLAG_NAME = new NamespacedKey(plugin, "claim-flag-name");
+        Claim.CLAIM_FLAG_AUTH_LEVEL = new NamespacedKey(plugin, "claim-flag-auth-level");
+        Claim.CLAIM_SLIME_IDENTIFIER = new NamespacedKey(plugin, "claim-slime-identifier");
     }
 
     @SuppressWarnings("ConstantConditions")
@@ -43,8 +40,8 @@ public class ClaimCommand implements CommandExecutor {
         ItemMeta toolMeta = tool.getItemMeta();
 
         toolMeta.getPersistentDataContainer().set(Survival.IS_CUSTOM_ITEM, PersistentDataType.BYTE, (byte) 1);
-        toolMeta.getPersistentDataContainer().set(IS_CLAIM_TOOL, PersistentDataType.BYTE, (byte) 1);
-        toolMeta.getPersistentDataContainer().set(CLAIM_TOOL_MODE, PersistentDataType.STRING, "claim");
+        toolMeta.getPersistentDataContainer().set(Claim.IS_CLAIM_TOOL, PersistentDataType.BYTE, (byte) 1);
+        toolMeta.getPersistentDataContainer().set(Claim.CLAIM_TOOL_MODE, PersistentDataType.STRING, "claim");
 
         toolMeta.setDisplayName(ChatColor.AQUA + "Claim Tool");
         tool.setItemMeta(toolMeta);

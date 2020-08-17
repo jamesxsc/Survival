@@ -8,10 +8,9 @@ import uk.tethys.survival.commands.CreateShopCommand;
 import uk.tethys.survival.commands.ShopCommand;
 import uk.tethys.survival.commands.internal.DRCLCommand;
 import uk.tethys.survival.core.SQLManager;
-import uk.tethys.survival.listeners.CentralShopListener;
-import uk.tethys.survival.listeners.ClaimListener;
-import uk.tethys.survival.listeners.CreateShopListener;
-import uk.tethys.survival.listeners.EconomyListener;
+import uk.tethys.survival.item.BuildersWandItem;
+import uk.tethys.survival.item.CustomItems;
+import uk.tethys.survival.listeners.*;
 import uk.tethys.survival.managers.ClaimManager;
 import uk.tethys.survival.managers.ShopManager;
 
@@ -66,11 +65,16 @@ public class Survival extends JavaPlugin {
         economyListener = new EconomyListener(this);
         getServer().getPluginManager().registerEvents(this.economyListener, this);
         getServer().getPluginManager().registerEvents(new CentralShopListener(this), this);
+        getServer().getPluginManager().registerEvents(new BuildersWandListener(), this);
 
         // managers
         claimManager = new ClaimManager(this);
         shopManager = new ShopManager(this);
 
+        CustomItems.registerRecipes();
+
+        // todo TEMP
+        Bukkit.getScheduler().runTaskTimer(this, new BuildersWandItem.PreviewTask(), 50, 0);
     }
 
     @Override

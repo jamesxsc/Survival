@@ -22,8 +22,8 @@ public class ClaimManager {
             connection.prepareStatement(String.format(
                     "INSERT INTO `claims` (`owner`, `x1`, `y1`, `z1`, `x2`, `y2`, `z2`, `world`) VALUES ('%s', %d, %d, %d, %d, %d, %d, '%s')",
                     claim.getOwner().toString(),
-                    (int) claim.getCorner1().getX(), (int) claim.getCorner1().getY(), (int) claim.getCorner1().getZ(),
-                    (int) claim.getCorner2().getX(), (int) claim.getCorner2().getY(), (int) claim.getCorner2().getZ(),
+                    claim.getCorner1().getLocation().getBlockX(), claim.getCorner1().getLocation().getBlockY(), claim.getCorner1().getLocation().getBlockZ(),
+                    claim.getCorner2().getLocation().getBlockX(), claim.getCorner2().getLocation().getBlockY(), claim.getCorner2().getLocation().getBlockZ(),
                     claim.getCorner1().getWorld())).execute();
         }
     }

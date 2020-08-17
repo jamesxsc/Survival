@@ -2,6 +2,7 @@ package uk.tethys.survival.objects;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.block.BlockBreakEvent;
@@ -18,6 +19,12 @@ import java.util.*;
 public class Claim implements Serializable {
 
     private static final long serialVersionUID = 1L;
+
+    public static NamespacedKey IS_CLAIM_TOOL;
+    public static NamespacedKey CLAIM_TOOL_MODE;
+    public static NamespacedKey CLAIM_FLAG_NAME;
+    public static NamespacedKey CLAIM_FLAG_AUTH_LEVEL;
+    public static NamespacedKey CLAIM_SLIME_IDENTIFIER;
 
     private int id;
 
@@ -257,6 +264,10 @@ public class Claim implements Serializable {
         if (this.id == 0)
             throw new IllegalStateException("Claim#getPlayerAuthLevel() cannot be used as id has not been set!");
 
+        if (player.getUniqueId().equals(this.owner)) {
+            return Flag.AuthLevel.LANDLORD;
+        }
+
         try (Connection connection = Survival.INSTANCE.getDBConnection()) {
             ResultSet resultSet = connection.prepareStatement(String.format(
                     "SELECT `auth_level` FROM `claim_access` WHERE `claim_id` = %d && `player` = '%s'",
@@ -264,7 +275,11 @@ public class Claim implements Serializable {
                     player.getUniqueId().toString()
             )).executeQuery();
 
-            return Flag.AuthLevel.valueOf(resultSet.getString(1));
+            if (resultSet.next()) {
+                return Flag.AuthLevel.valueOf(resultSet.getString(1));
+            } else {
+                return Flag.AuthLevel.WANDERER;
+            }
         }
     }
 
