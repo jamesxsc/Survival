@@ -3,6 +3,8 @@ package uk.tethys.survival.listeners;
 import org.bukkit.GameMode;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.data.BlockData;
+import org.bukkit.block.data.Directional;
 import org.bukkit.block.data.Rotatable;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -35,6 +37,7 @@ public class BuildersWandListener implements Listener {
             event.setCancelled(true);
 
             Block clicked = event.getClickedBlock();
+            BlockData clickedData = clicked.getBlockData();
             Player player = event.getPlayer();
             BlockFace facing = getLookingAt(player);
 
@@ -50,8 +53,10 @@ public class BuildersWandListener implements Listener {
                     toDecr.setAmount(toDecr.getAmount() - 1);
                 }
                 block.setType(clicked.getType());
-                if (clicked instanceof Rotatable) {
-                    ((Rotatable) block).setRotation(((Rotatable) clicked).getRotation());
+                if (clickedData instanceof Directional) {
+                    BlockData blockData = block.getBlockData();
+                    ((Directional) blockData).setFacing(((Directional) clickedData).getFacing());
+                    block.setBlockData(blockData);
                 }
             }
         }

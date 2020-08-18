@@ -33,8 +33,6 @@
   <component name="ChangeListManager">
     <list default="true" id="4ef5f5c2-ccfe-4fcd-80b0-241753096a4f" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/uk/tethys/survival/Survival.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/uk/tethys/survival/Survival.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/uk/tethys/survival/item/BuildersWandItem.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/uk/tethys/survival/item/BuildersWandItem.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/uk/tethys/survival/listeners/BuildersWandListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/uk/tethys/survival/listeners/BuildersWandListener.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -166,7 +164,7 @@
       <workItem from="1595883140692" duration="252000" />
       <workItem from="1596182114615" duration="9772000" />
       <workItem from="1597016794261" duration="25156000" />
-      <workItem from="1597755338090" duration="189000" />
+      <workItem from="1597755338090" duration="341000" />
     </task>
     <task id="LOCAL-00001" summary="starting on some claim logic and a bit of tidying up">
       <created>1593707019621</created>
@@ -231,7 +229,14 @@
       <option name="project" value="LOCAL" />
       <updated>1597673402983</updated>
     </task>
-    <option name="localTasksCounter" value="10" />
+    <task id="LOCAL-00010" summary="rotatable blocks with bw">
+      <created>1597755544307</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1597755544307</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -247,7 +252,8 @@
     <MESSAGE value="some work on flags -nb need to refactor accessflag/flag-&gt;flag/flagtype" />
     <MESSAGE value="put flags" />
     <MESSAGE value="builders wand" />
-    <option name="LAST_COMMIT_MESSAGE" value="builders wand" />
+    <MESSAGE value="rotatable blocks with bw" />
+    <option name="LAST_COMMIT_MESSAGE" value="rotatable blocks with bw" />
   </component>
   <component name="WindowStateProjectService">
     <state x="552" y="238" width="816" height="729" key="#Intentions" timestamp="1593722995587">
@@ -276,11 +282,12 @@
       <screen x="0" y="0" width="1536" height="824" />
     </state>
     <state x="516" y="267" key="ANALYSIS_DLG_com.intellij.analysis.BaseAnalysisAction$1/0.0.1536.824@0.0.1536.824" timestamp="1596197941220" />
-    <state x="-1335" y="809" key="CommitChangelistDialog2" timestamp="1597673400984">
-      <screen x="-1920" y="676" width="1920" height="1040" />
+    <state x="585" y="148" key="CommitChangelistDialog2" timestamp="1597755542838">
+      <screen x="0" y="0" width="1920" height="1160" />
     </state>
     <state x="-1335" y="809" key="CommitChangelistDialog2/0.0.1200.1880/-1920.676.1920.1040@-1920.676.1920.1040" timestamp="1597673400984" />
     <state x="468" y="0" key="CommitChangelistDialog2/0.0.1536.824@0.0.1536.824" timestamp="1596205793645" />
+    <state x="585" y="148" key="CommitChangelistDialog2/0.0.1920.1160/1920.-339.1200.1880/-1920.337.1920.1040@0.0.1920.1160" timestamp="1597755542838" />
     <state x="585" y="148" key="CommitChangelistDialog2/1920.-339.1200.1880/-1920.337.1920.1040/0.0.1920.1160@0.0.1920.1160" timestamp="1596316080025" />
     <state x="549" y="167" key="FileChooserDialogImpl" timestamp="1595883390311">
       <screen x="0" y="0" width="1536" height="824" />
@@ -323,10 +330,11 @@
       <screen x="0" y="0" width="1920" height="1160" />
     </state>
     <state x="544" y="317" key="SettingsEditor/1920.-339.1200.1880/-1920.337.1920.1040/0.0.1920.1160@0.0.1920.1160" timestamp="1593722143958" />
-    <state x="-1368" y="957" key="Vcs.Push.Dialog.v2" timestamp="1597673426708">
-      <screen x="-1920" y="676" width="1920" height="1040" />
+    <state x="552" y="313" key="Vcs.Push.Dialog.v2" timestamp="1597755545580">
+      <screen x="0" y="0" width="1920" height="1160" />
     </state>
     <state x="-1368" y="957" key="Vcs.Push.Dialog.v2/0.0.1200.1880/-1920.676.1920.1040@-1920.676.1920.1040" timestamp="1597673426708" />
+    <state x="552" y="313" key="Vcs.Push.Dialog.v2/0.0.1920.1160/1920.-339.1200.1880/-1920.337.1920.1040@0.0.1920.1160" timestamp="1597755545580" />
     <state x="552" y="313" key="Vcs.Push.Dialog.v2/1920.-339.1200.1880/-1920.337.1920.1040/0.0.1920.1160@0.0.1920.1160" timestamp="1596316082244" />
     <state x="830" y="467" width="316" height="244" key="com.intellij.database.actions.DdlActions$DeleteProvider2$1" timestamp="1596316964967">
       <screen x="0" y="0" width="1920" height="1160" />
