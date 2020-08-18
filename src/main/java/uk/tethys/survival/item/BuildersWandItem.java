@@ -134,7 +134,7 @@ public class BuildersWandItem implements CustomItem {
 
         int maxSize = Math.min(
                 50,
-                PreviewTask.countInInventory(player.getInventory(), material)
+                player.getGameMode() == GameMode.CREATIVE ? Integer.MAX_VALUE : PreviewTask.countInInventory(player.getInventory(), material)
         );
 
         while (blocksToCheck.size() > 0 && blocks.size() < maxSize) {
@@ -146,7 +146,8 @@ public class BuildersWandItem implements CustomItem {
                             !blocks.contains(toCheck) &&
                             !ClaimListener.isDenied(player, toCheck.getLocation(), "BREAK")
             ) {
-                blocks.add(toCheck);
+                if (!(toCheck.getLocation().distance(player.getLocation()) < 1))
+                    blocks.add(toCheck);
 
                 switch (face) {
                     case UP:

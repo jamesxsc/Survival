@@ -74,7 +74,7 @@ public class Survival extends JavaPlugin {
         CustomItems.registerRecipes();
 
         // todo TEMP
-        Bukkit.getScheduler().runTaskTimer(this, new BuildersWandItem.PreviewTask(), 50, 0);
+        Bukkit.getScheduler().runTaskTimer(this, new BuildersWandItem.PreviewTask(), 200, 0);
     }
 
     @Override

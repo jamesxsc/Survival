@@ -1,8 +1,9 @@
 package uk.tethys.survival.listeners;
 
-import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.data.Rotatable;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -42,11 +43,16 @@ public class BuildersWandListener implements Listener {
             List<Block> selection = BuildersWandItem.scan(clicked.getRelative(facing), facing, player, clicked.getType());
 
             for (Block block : selection) {
+                if (player.getGameMode() != GameMode.CREATIVE) {
+                    ItemStack toDecr = player.getInventory().getItem(player.getInventory().first(clicked.getType()));
+                    if (toDecr == null)
+                        break;
+                    toDecr.setAmount(toDecr.getAmount() - 1);
+                }
                 block.setType(clicked.getType());
-                ItemStack toDecr = player.getInventory().getItem(player.getInventory().first(clicked.getType()));
-                if (toDecr == null)
-                    break;
-                toDecr.setAmount(toDecr.getAmount() - 1);
+                if (clicked instanceof Rotatable) {
+                    ((Rotatable) block).setRotation(((Rotatable) clicked).getRotation());
+                }
             }
         }
     }
