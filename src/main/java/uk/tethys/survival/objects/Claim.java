@@ -12,6 +12,7 @@ import uk.tethys.survival.util.SerializableLocation;
 
 import java.io.Serializable;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
@@ -209,11 +210,9 @@ public class Claim implements Serializable {
         if (this.id == 0)
             throw new IllegalStateException("Claim#getFlags() cannot be used as id has not been set!");
         Set<AccessFlag> flags = new HashSet<>();
-        try (Connection connection = Survival.INSTANCE.getDBConnection()) {
-            ResultSet overlappingClaim = connection.prepareStatement(String.format(
-                    "SELECT * FROM `claim_flags` WHERE `claim_id` = %d",
-                    this.id
-            )).executeQuery();
+        try (ResultSet overlappingClaim = Survival.INSTANCE.getDBConnection().prepareStatement(String.format(
+                "SELECT * FROM `claim_flags` WHERE `claim_id` = %d",
+                this.id)).executeQuery()) {
 
             while (overlappingClaim.next()) {
                 flags.add(new AccessFlag(Flag.valueOf(overlappingClaim.getString("flag")),
@@ -231,31 +230,36 @@ public class Claim implements Serializable {
             throw new IllegalStateException("Claim#putFlag() cannot be used as id has not been set!");
 
         try (Connection connection = Survival.INSTANCE.getDBConnection()) {
-            ResultSet retrievedFlag = connection.prepareStatement(String.format(
+            try (ResultSet retrievedFlag = connection.prepareStatement(String.format(
                     "SELECT value FROM `claim_flags` WHERE `claim_id` = %d && `flag` = '%s' && `auth_level` = '%s'",
                     this.id,
                     flag.getFlag().name(),
                     flag.getAuthLevel().name()
-            )).executeQuery();
+            )).executeQuery()) {
 
-            if (retrievedFlag.next()) {
-                if (retrievedFlag.getBoolean("value") != flag.getValue()) {
-                    connection.prepareStatement(String.format(
-                            "UPDATE `claim_flags` SET `value` = %b WHERE `claim_id` = %d && `flag` = '%s' && `auth_level` = '%s'",
-                            flag.getValue(),
+                if (retrievedFlag.next()) {
+                    if (retrievedFlag.getBoolean("value") != flag.getValue()) {
+                        PreparedStatement st = connection.prepareStatement(String.format(
+                                "UPDATE `claim_flags` SET `value` = %b WHERE `claim_id` = %d && `flag` = '%s' && `auth_level` = '%s'",
+                                flag.getValue(),
+                                this.id,
+                                flag.getFlag().name(),
+                                flag.getAuthLevel().name()
+                        ));
+                        st.execute();
+                        st.close();
+                    }
+                } else {
+                    PreparedStatement st = connection.prepareStatement(String.format(
+                            "INSERT INTO `claim_flags` (`claim_id`, `flag`, `auth_level`, `value`) VALUES (%d, '%s', '%s', %b)",
                             this.id,
                             flag.getFlag().name(),
-                            flag.getAuthLevel().name()
-                    )).execute();
+                            flag.getAuthLevel().name(),
+                            flag.getValue()
+                    ));
+                    st.execute();
+                    st.close();
                 }
-            } else {
-                connection.prepareStatement(String.format(
-                        "INSERT INTO `claim_flags` (`claim_id`, `flag`, `auth_level`, `value`) VALUES (%d, '%s', '%s', %b)",
-                        this.id,
-                        flag.getFlag().name(),
-                        flag.getAuthLevel().name(),
-                        flag.getValue()
-                )).execute();
             }
         }
     }
@@ -268,13 +272,10 @@ public class Claim implements Serializable {
             return Flag.AuthLevel.LANDLORD;
         }
 
-        try (Connection connection = Survival.INSTANCE.getDBConnection()) {
-            ResultSet resultSet = connection.prepareStatement(String.format(
-                    "SELECT `auth_level` FROM `claim_access` WHERE `claim_id` = %d && `player` = '%s'",
-                    this.id,
-                    player.getUniqueId().toString()
-            )).executeQuery();
-
+        try (ResultSet resultSet = Survival.INSTANCE.getDBConnection().prepareStatement(String.format(
+                "SELECT `auth_level` FROM `claim_access` WHERE `claim_id` = %d && `player` = '%s'",
+                this.id,
+                player.getUniqueId().toString())).executeQuery()) {
             if (resultSet.next()) {
                 return Flag.AuthLevel.valueOf(resultSet.getString(1));
             } else {
@@ -284,15 +285,13 @@ public class Claim implements Serializable {
     }
 
     public static Optional<Claim> getClaim(Location location) throws SQLException {
-        try (Connection connection = Survival.INSTANCE.getDBConnection()) {
-            ResultSet claim = connection.prepareStatement(String.format(
-                    "SELECT * FROM claims WHERE `world` = '%s' && ((`x1` <= %d && %d <= `x2`) && (`z1` <= %d && %d <= `z2`)) LIMIT 1",
-                    Objects.requireNonNull(location.getWorld()).getUID().toString(),
-                    location.getBlockX(),
-                    location.getBlockX(),
-                    location.getBlockZ(),
-                    location.getBlockZ()
-            )).executeQuery();
+        try (ResultSet claim = Survival.INSTANCE.getDBConnection().prepareStatement(String.format(
+                "SELECT * FROM claims WHERE `world` = '%s' && ((`x1` <= %d && %d <= `x2`) && (`z1` <= %d && %d <= `z2`)) LIMIT 1",
+                Objects.requireNonNull(location.getWorld()).getUID().toString(),
+                location.getBlockX(),
+                location.getBlockX(),
+                location.getBlockZ(),
+                location.getBlockZ())).executeQuery()) {
             boolean inClaim = claim.next();
             if (inClaim)
                 return Optional.of(new Claim(

@@ -37,6 +37,10 @@ public class BuildersWandListener implements Listener {
             event.setCancelled(true);
 
             Block clicked = event.getClickedBlock();
+
+            if (clicked == null)
+                return;
+
             BlockData clickedData = clicked.getBlockData();
             Player player = event.getPlayer();
             BlockFace facing = getLookingAt(player);

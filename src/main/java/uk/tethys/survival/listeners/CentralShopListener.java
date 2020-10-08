@@ -8,6 +8,7 @@ import uk.tethys.survival.Survival;
 import uk.tethys.survival.message.Messages;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -42,14 +43,17 @@ public class CentralShopListener implements Listener {
         }
 
         try (Connection connection = plugin.getDBConnection()) {
-            ResultSet unlocked = connection.prepareStatement(
+            try (ResultSet unlocked = connection.prepareStatement(
                     String.format("SELECT `item` FROM `unlocked_items` WHERE `player` = '%s'",
-                            event.getEntity().getUniqueId().toString())).executeQuery();
-            while (unlocked.next())
-                if (itemName.equals(unlocked.getString("item"))) return;
-            connection.prepareStatement(String.format(
+                            event.getEntity().getUniqueId().toString())).executeQuery()) {
+                while (unlocked.next())
+                    if (itemName.equals(unlocked.getString("item"))) return;
+            }
+            PreparedStatement insertUnlockStatement = connection.prepareStatement(String.format(
                     "INSERT INTO `unlocked_items` (`player`, `item`) VALUES ('%s', '%s')",
-                    event.getEntity().getUniqueId().toString(), itemName)).execute();
+                    event.getEntity().getUniqueId().toString(), itemName));
+            insertUnlockStatement.execute();
+            insertUnlockStatement.close();
 
             event.getEntity().sendMessage(Messages.UNLOCK_ITEM(event.getItem().getItemStack()));
         } catch (SQLException e) {

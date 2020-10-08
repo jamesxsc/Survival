@@ -38,7 +38,6 @@ import uk.tethys.survival.message.Messages;
 import uk.tethys.survival.objects.Claim;
 import uk.tethys.survival.tasks.ClaimTask;
 
-import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
@@ -171,11 +170,9 @@ public class ClaimListener implements Listener {
 
             Set<Claim> sameWorld = new HashSet<>();
 
-            try (Connection connection = plugin.getDBConnection()) {
-                ResultSet overlappingClaims = connection.prepareStatement(String.format(
-                        "SELECT `owner`, `x1`, `z1`, `x2`, `z2`, `world` FROM claims WHERE `world` = '%s'",
-                        corner1.getWorld().getUID())).executeQuery();
-
+            try (ResultSet overlappingClaims = plugin.getDBConnection().prepareStatement(String.format(
+                    "SELECT `owner`, `x1`, `z1`, `x2`, `z2`, `world` FROM claims WHERE `world` = '%s'",
+                    corner1.getWorld().getUID())).executeQuery()) {
                 while (overlappingClaims.next()) {
                     sameWorld.add(new Claim(UUID.fromString(overlappingClaims.getString("owner")),
                             new Location(
@@ -301,7 +298,7 @@ public class ClaimListener implements Listener {
             if (i % 9 == 0)
                 i += 2;
 
-            stacks[i - 1] = selectFlag;
+            stacks[i - 1] = selectFlag; // lgtm [java/index-out-of-bounds]
 
             i++;
         }

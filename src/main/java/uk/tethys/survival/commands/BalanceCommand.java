@@ -25,8 +25,8 @@ public class BalanceCommand implements CommandExecutor {
         } else {
             Player player = (Player) commandSender;
 
-            try {
-                ResultSet resultSet = plugin.getDBConnection().prepareStatement(String.format("SELECT `balance` FROM balances WHERE `player` = '%s' LIMIT 1")).executeQuery();
+            try (ResultSet resultSet = plugin.getDBConnection().prepareStatement(String.format("SELECT `balance` FROM balances WHERE `player` = '%s' LIMIT 1",
+                    player.getUniqueId().toString())).executeQuery()) {
                 int balance = resultSet.getInt(1);
 
                 player.sendMessage(Messages.SELF_BALANCE(balance));
