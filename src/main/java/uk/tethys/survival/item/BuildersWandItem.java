@@ -5,6 +5,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.PrepareItemCraftEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Recipe;
@@ -18,6 +19,7 @@ import uk.tethys.survival.listeners.ClaimListener;
 
 import java.awt.image.AreaAveragingScaleFilter;
 import java.util.*;
+import java.util.function.Consumer;
 
 public class BuildersWandItem implements CustomItem {
 
@@ -39,6 +41,24 @@ public class BuildersWandItem implements CustomItem {
     }
 
     @Override
+    public Consumer<PrepareItemCraftEvent> checkRecipeMeta() {
+        return (event -> {
+            ItemStack result = event.getInventory().getResult();
+            if (result == null)
+                return; // we have nothing to do if invalid recipe at this stage
+
+            if (CustomItem.checkId(result, getId())) {
+                // is builder's wand so need to check nether star has correct meta
+                for (ItemStack ingredient : event.getInventory().getMatrix()) {
+                    if (ingredient.getType().equals(Material.NETHER_STAR)) {
+                        //todo check for correct meta and cancel if not / set result to be bad
+                    }
+                }
+            }
+        });
+    }
+
+    @Override
     public String getId() {
         return "builders_wand";
     }
@@ -55,6 +75,16 @@ public class BuildersWandItem implements CustomItem {
         }
 
         meta.setDisplayName(ChatColor.YELLOW + "Builder's Wand");
+
+        List<String> lore = new ArrayList<String>(){
+            {
+                add(" ");
+                add(ChatColor.GRAY + "Make building easier with this simple tool.");
+                add(" ");
+            }
+        };
+
+        meta.setLore(lore);
 
         item.setItemMeta(meta);
 
@@ -133,7 +163,7 @@ public class BuildersWandItem implements CustomItem {
         blocksToCheck.add(block);
 
         int maxSize = Math.min(
-                50,
+                50, //max blocks
                 player.getGameMode() == GameMode.CREATIVE ? Integer.MAX_VALUE : PreviewTask.countInInventory(player.getInventory(), material)
         );
 
@@ -144,7 +174,7 @@ public class BuildersWandItem implements CustomItem {
                     toCheck.getType().equals(Material.AIR) &&
                             toCheck.getRelative(face.getOppositeFace()).getType().equals(material) &&
                             !blocks.contains(toCheck) &&
-                            !ClaimListener.isDenied(player, toCheck.getLocation(), "BREAK")
+                            !ClaimListener.isDenied(player, toCheck.getLocation(), "PLACE")
             ) {
                 if (!(toCheck.getLocation().distance(player.getLocation()) < 1))
                     blocks.add(toCheck);

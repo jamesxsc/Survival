@@ -31,14 +31,13 @@
     </treeState>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="4ef5f5c2-ccfe-4fcd-80b0-241753096a4f" name="Default Changelist" comment="">
+    <list default="true" id="4ef5f5c2-ccfe-4fcd-80b0-241753096a4f" name="Default Changelist" comment="remove some potential db resource leaks">
+      <change afterPath="$PROJECT_DIR$/src/main/java/uk/tethys/survival/listeners/DropInterceptListener.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/uk/tethys/survival/seeders/ClaimSeeder.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/uk/tethys/survival/seeders/Seeder.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/uk/tethys/survival/commands/BalanceCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/uk/tethys/survival/commands/BalanceCommand.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/uk/tethys/survival/listeners/BuildersWandListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/uk/tethys/survival/listeners/BuildersWandListener.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/uk/tethys/survival/listeners/CentralShopListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/uk/tethys/survival/listeners/CentralShopListener.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/uk/tethys/survival/listeners/ClaimListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/uk/tethys/survival/listeners/ClaimListener.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/uk/tethys/survival/managers/ClaimManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/uk/tethys/survival/managers/ClaimManager.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/uk/tethys/survival/objects/Claim.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/uk/tethys/survival/objects/Claim.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/uk/tethys/survival/item/BuildersWandItem.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/uk/tethys/survival/item/BuildersWandItem.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/uk/tethys/survival/item/CustomItem.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/uk/tethys/survival/item/CustomItem.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -54,6 +53,7 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
+        <option value="Interface" />
         <option value="Class" />
       </list>
     </option>
@@ -170,6 +170,7 @@
       <workItem from="1596182114615" duration="9772000" />
       <workItem from="1597016794261" duration="25156000" />
       <workItem from="1597755338090" duration="341000" />
+      <workItem from="1603356142100" duration="2650000" />
     </task>
     <task id="LOCAL-00001" summary="starting on some claim logic and a bit of tidying up">
       <created>1593707019621</created>
@@ -241,7 +242,14 @@
       <option name="project" value="LOCAL" />
       <updated>1597755544307</updated>
     </task>
-    <option name="localTasksCounter" value="11" />
+    <task id="LOCAL-00011" summary="remove some potential db resource leaks">
+      <created>1602149763189</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1602149763189</updated>
+    </task>
+    <option name="localTasksCounter" value="12" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -258,22 +266,18 @@
     <MESSAGE value="put flags" />
     <MESSAGE value="builders wand" />
     <MESSAGE value="rotatable blocks with bw" />
-    <option name="LAST_COMMIT_MESSAGE" value="rotatable blocks with bw" />
+    <MESSAGE value="remove some potential db resource leaks" />
+    <option name="LAST_COMMIT_MESSAGE" value="remove some potential db resource leaks" />
   </component>
   <component name="WindowStateProjectService">
-    <state x="552" y="238" width="816" height="729" key="#Intentions" timestamp="1593722995587">
-      <screen x="0" y="0" width="1920" height="1160" />
-    </state>
-    <state x="552" y="238" width="816" height="729" key="#Intentions/1920.-339.1200.1880/-1920.337.1920.1040/0.0.1920.1160@0.0.1920.1160" timestamp="1593722995587" />
     <state x="214" y="135" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1596207514574">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
     <state x="214" y="135" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1536.824@0.0.1536.824" timestamp="1596207514574" />
-    <state x="268" y="365" key="#com.intellij.execution.impl.EditConfigurationsDialog/1920.-339.1200.1880/-1920.337.1920.1040/0.0.1920.1160@0.0.1920.1160" timestamp="1593731241529" />
-    <state x="718" y="168" key="#com.intellij.ide.util.MemberChooser" timestamp="1597089687422">
-      <screen x="0" y="0" width="1920" height="1160" />
+    <state x="574" y="119" key="#com.intellij.ide.util.MemberChooser" timestamp="1603357464115">
+      <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state x="574" y="119" key="#com.intellij.ide.util.MemberChooser/0.0.1536.824@0.0.1536.824" timestamp="1596194166313" />
+    <state x="574" y="119" key="#com.intellij.ide.util.MemberChooser/0.0.1536.824@0.0.1536.824" timestamp="1603357464115" />
     <state x="718" y="168" key="#com.intellij.ide.util.MemberChooser/1920.-339.1200.1880/-1920.337.1920.1040/0.0.1920.1160@0.0.1920.1160" timestamp="1597089687422" />
     <state x="689" y="370" key="#com.intellij.ide.util.TreeClassChooserDialog" timestamp="1596501056640">
       <screen x="0" y="0" width="1920" height="1160" />
@@ -287,11 +291,11 @@
       <screen x="0" y="0" width="1536" height="824" />
     </state>
     <state x="516" y="267" key="ANALYSIS_DLG_com.intellij.analysis.BaseAnalysisAction$1/0.0.1536.824@0.0.1536.824" timestamp="1596197941220" />
-    <state x="585" y="148" key="CommitChangelistDialog2" timestamp="1597755542838">
-      <screen x="0" y="0" width="1920" height="1160" />
+    <state x="468" y="0" key="CommitChangelistDialog2" timestamp="1603356156628">
+      <screen x="0" y="0" width="1536" height="824" />
     </state>
     <state x="-1335" y="809" key="CommitChangelistDialog2/0.0.1200.1880/-1920.676.1920.1040@-1920.676.1920.1040" timestamp="1597673400984" />
-    <state x="468" y="0" key="CommitChangelistDialog2/0.0.1536.824@0.0.1536.824" timestamp="1596205793645" />
+    <state x="468" y="0" key="CommitChangelistDialog2/0.0.1536.824@0.0.1536.824" timestamp="1603356156628" />
     <state x="585" y="148" key="CommitChangelistDialog2/0.0.1920.1160/1920.-339.1200.1880/-1920.337.1920.1040@0.0.1920.1160" timestamp="1597755542838" />
     <state x="585" y="148" key="CommitChangelistDialog2/1920.-339.1200.1880/-1920.337.1920.1040/0.0.1920.1160@0.0.1920.1160" timestamp="1596316080025" />
     <state x="549" y="167" key="FileChooserDialogImpl" timestamp="1595883390311">
@@ -330,15 +334,11 @@
       <screen x="0" y="0" width="1536" height="824" />
     </state>
     <state width="189" height="325" key="HiddenNamespacesPopup/0.0.1536.824@0.0.1536.824" timestamp="1595766090336" />
-    <state width="196" height="457" key="HiddenNamespacesPopup/1920.-339.1200.1880/-1920.337.1920.1040/0.0.1920.1160@0.0.1920.1160" timestamp="1593710152860" />
-    <state x="544" y="317" key="SettingsEditor" timestamp="1593722143958">
-      <screen x="0" y="0" width="1920" height="1160" />
-    </state>
-    <state x="544" y="317" key="SettingsEditor/1920.-339.1200.1880/-1920.337.1920.1040/0.0.1920.1160@0.0.1920.1160" timestamp="1593722143958" />
-    <state x="552" y="313" key="Vcs.Push.Dialog.v2" timestamp="1597755545580">
-      <screen x="0" y="0" width="1920" height="1160" />
+    <state x="442" y="222" key="Vcs.Push.Dialog.v2" timestamp="1603356174210">
+      <screen x="0" y="0" width="1536" height="824" />
     </state>
     <state x="-1368" y="957" key="Vcs.Push.Dialog.v2/0.0.1200.1880/-1920.676.1920.1040@-1920.676.1920.1040" timestamp="1597673426708" />
+    <state x="442" y="222" key="Vcs.Push.Dialog.v2/0.0.1536.824@0.0.1536.824" timestamp="1603356174210" />
     <state x="552" y="313" key="Vcs.Push.Dialog.v2/0.0.1920.1160/1920.-339.1200.1880/-1920.337.1920.1040@0.0.1920.1160" timestamp="1597755545580" />
     <state x="552" y="313" key="Vcs.Push.Dialog.v2/1920.-339.1200.1880/-1920.337.1920.1040/0.0.1920.1160@0.0.1920.1160" timestamp="1596316082244" />
     <state x="830" y="467" width="316" height="244" key="com.intellij.database.actions.DdlActions$DeleteProvider2$1" timestamp="1596316964967">
@@ -353,13 +353,11 @@
       <screen x="0" y="0" width="1536" height="824" />
     </state>
     <state x="548" y="197" width="672" height="297" key="run.anything.popup/0.0.1536.824@0.0.1536.824" timestamp="1596208376633" />
-    <state x="685" y="278" width="672" height="418" key="run.anything.popup/1920.-339.1200.1880/-1920.337.1920.1040/0.0.1920.1160@0.0.1920.1160" timestamp="1593709139153" />
-    <state x="552" y="191" width="672" height="299" key="search.everywhere.popup" timestamp="1602149507563">
+    <state x="552" y="191" width="672" height="299" key="search.everywhere.popup" timestamp="1603357864481">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state x="552" y="191" width="672" height="299" key="search.everywhere.popup/0.0.1536.824@0.0.1536.824" timestamp="1602149507563" />
+    <state x="552" y="191" width="672" height="299" key="search.everywhere.popup/0.0.1536.824@0.0.1536.824" timestamp="1603357864481" />
     <state x="690" y="269" width="672" height="420" key="search.everywhere.popup/0.0.1920.1160/1920.-339.1200.1880/-1920.337.1920.1040@0.0.1920.1160" timestamp="1597755351223" />
-    <state x="-1230" y="578" width="672" height="376" key="search.everywhere.popup/1920.-339.1200.1880/-1920.337.1920.1040/0.0.1920.1160@-1920.337.1920.1040" timestamp="1593704617362" />
     <state x="690" y="269" width="672" height="420" key="search.everywhere.popup/1920.-339.1200.1880/-1920.337.1920.1040/0.0.1920.1160@0.0.1920.1160" timestamp="1597716313747" />
   </component>
   <component name="mavenExecuteGoalHistory">
