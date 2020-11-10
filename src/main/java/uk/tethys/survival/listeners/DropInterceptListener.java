@@ -12,7 +12,7 @@ public class DropInterceptListener implements Listener {
     @EventHandler
     public void onDeath(EntityDeathEvent event) {
         List<ItemStack> drops = event.getDrops();
-        drops.clear();
+//        drops.clear();
 
         //todo gen and input custom drops (supplier network)
     }

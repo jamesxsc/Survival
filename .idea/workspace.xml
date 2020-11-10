@@ -31,13 +31,11 @@
     </treeState>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="4ef5f5c2-ccfe-4fcd-80b0-241753096a4f" name="Default Changelist" comment="remove some potential db resource leaks">
-      <change afterPath="$PROJECT_DIR$/src/main/java/uk/tethys/survival/listeners/DropInterceptListener.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/uk/tethys/survival/seeders/ClaimSeeder.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/uk/tethys/survival/seeders/Seeder.java" afterDir="false" />
+    <list default="true" id="4ef5f5c2-ccfe-4fcd-80b0-241753096a4f" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/src/main/java/uk/tethys/survival/listeners/DamageInternalEntityListener.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/uk/tethys/survival/item/BuildersWandItem.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/uk/tethys/survival/item/BuildersWandItem.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/uk/tethys/survival/item/CustomItem.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/uk/tethys/survival/item/CustomItem.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/uk/tethys/survival/Survival.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/uk/tethys/survival/Survival.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/uk/tethys/survival/listeners/DropInterceptListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/uk/tethys/survival/listeners/DropInterceptListener.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -86,7 +84,7 @@
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
     <property name="com.intellij.ide.scratch.LRUPopupBuilder$1/New Scratch File" value="JAVA" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../Vestrimu" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../sba/skyblockaddons" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.detected.package.tslint" value="true" />
     <property name="node.js.path.for.package.eslint" value="project" />
@@ -170,7 +168,9 @@
       <workItem from="1596182114615" duration="9772000" />
       <workItem from="1597016794261" duration="25156000" />
       <workItem from="1597755338090" duration="341000" />
-      <workItem from="1603356142100" duration="2650000" />
+      <workItem from="1603356142100" duration="4046000" />
+      <workItem from="1604660236565" duration="56000" />
+      <workItem from="1605010644574" duration="1646000" />
     </task>
     <task id="LOCAL-00001" summary="starting on some claim logic and a bit of tidying up">
       <created>1593707019621</created>
@@ -249,7 +249,14 @@
       <option name="project" value="LOCAL" />
       <updated>1602149763189</updated>
     </task>
-    <option name="localTasksCounter" value="12" />
+    <task id="LOCAL-00012" summary="small changes">
+      <created>1603358825429</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1603358825429</updated>
+    </task>
+    <option name="localTasksCounter" value="13" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -261,23 +268,19 @@
     <MESSAGE value="ensure that we never Event#setCancelled(false)" />
     <MESSAGE value="create flags table" />
     <MESSAGE value="some updates and basic messages" />
-    <MESSAGE value="small changes" />
     <MESSAGE value="some work on flags -nb need to refactor accessflag/flag-&gt;flag/flagtype" />
     <MESSAGE value="put flags" />
     <MESSAGE value="builders wand" />
     <MESSAGE value="rotatable blocks with bw" />
     <MESSAGE value="remove some potential db resource leaks" />
-    <option name="LAST_COMMIT_MESSAGE" value="remove some potential db resource leaks" />
+    <MESSAGE value="small changes" />
+    <option name="LAST_COMMIT_MESSAGE" value="small changes" />
   </component>
   <component name="WindowStateProjectService">
-    <state x="214" y="135" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1596207514574">
+    <state x="574" y="119" key="#com.intellij.ide.util.MemberChooser" timestamp="1605012035120">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state x="214" y="135" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1536.824@0.0.1536.824" timestamp="1596207514574" />
-    <state x="574" y="119" key="#com.intellij.ide.util.MemberChooser" timestamp="1603357464115">
-      <screen x="0" y="0" width="1536" height="824" />
-    </state>
-    <state x="574" y="119" key="#com.intellij.ide.util.MemberChooser/0.0.1536.824@0.0.1536.824" timestamp="1603357464115" />
+    <state x="574" y="119" key="#com.intellij.ide.util.MemberChooser/0.0.1536.824@0.0.1536.824" timestamp="1605012035120" />
     <state x="718" y="168" key="#com.intellij.ide.util.MemberChooser/1920.-339.1200.1880/-1920.337.1920.1040/0.0.1920.1160@0.0.1920.1160" timestamp="1597089687422" />
     <state x="689" y="370" key="#com.intellij.ide.util.TreeClassChooserDialog" timestamp="1596501056640">
       <screen x="0" y="0" width="1920" height="1160" />
@@ -287,76 +290,50 @@
       <screen x="0" y="0" width="1920" height="1160" />
     </state>
     <state x="671" y="381" key="#com.intellij.refactoring.move.moveMembers.MoveMembersDialog/1920.-339.1200.1880/-1920.337.1920.1040/0.0.1920.1160@0.0.1920.1160" timestamp="1597614627347" />
-    <state x="516" y="267" key="ANALYSIS_DLG_com.intellij.analysis.BaseAnalysisAction$1" timestamp="1596197941220">
-      <screen x="0" y="0" width="1536" height="824" />
-    </state>
-    <state x="516" y="267" key="ANALYSIS_DLG_com.intellij.analysis.BaseAnalysisAction$1/0.0.1536.824@0.0.1536.824" timestamp="1596197941220" />
-    <state x="468" y="0" key="CommitChangelistDialog2" timestamp="1603356156628">
+    <state x="468" y="0" key="CommitChangelistDialog2" timestamp="1603358824209">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
     <state x="-1335" y="809" key="CommitChangelistDialog2/0.0.1200.1880/-1920.676.1920.1040@-1920.676.1920.1040" timestamp="1597673400984" />
-    <state x="468" y="0" key="CommitChangelistDialog2/0.0.1536.824@0.0.1536.824" timestamp="1603356156628" />
+    <state x="468" y="0" key="CommitChangelistDialog2/0.0.1536.824@0.0.1536.824" timestamp="1603358824209" />
     <state x="585" y="148" key="CommitChangelistDialog2/0.0.1920.1160/1920.-339.1200.1880/-1920.337.1920.1040@0.0.1920.1160" timestamp="1597755542838" />
-    <state x="585" y="148" key="CommitChangelistDialog2/1920.-339.1200.1880/-1920.337.1920.1040/0.0.1920.1160@0.0.1920.1160" timestamp="1596316080025" />
-    <state x="549" y="167" key="FileChooserDialogImpl" timestamp="1595883390311">
+    <state x="549" y="167" key="FileChooserDialogImpl" timestamp="1604660287292">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state x="549" y="167" key="FileChooserDialogImpl/0.0.1536.824@0.0.1536.824" timestamp="1595883390311" />
+    <state x="549" y="167" key="FileChooserDialogImpl/0.0.1536.824@0.0.1536.824" timestamp="1604660287292" />
     <state width="1877" height="213" key="GridCell.Tab.0.bottom" timestamp="1597716157498">
       <screen x="0" y="0" width="1920" height="1160" />
     </state>
     <state width="1877" height="186" key="GridCell.Tab.0.bottom/0.0.1200.1880/-1920.676.1920.1040@-1920.676.1920.1040" timestamp="1597673434447" />
-    <state width="1493" height="210" key="GridCell.Tab.0.bottom/0.0.1536.824@0.0.1536.824" timestamp="1596208636175" />
     <state width="1877" height="277" key="GridCell.Tab.0.bottom/1920.-339.1200.1880/-1920.337.1920.1040/0.0.1920.1160@-1920.337.1920.1040" timestamp="1596500085003" />
     <state width="1877" height="213" key="GridCell.Tab.0.bottom/1920.-339.1200.1880/-1920.337.1920.1040/0.0.1920.1160@0.0.1920.1160" timestamp="1597716157498" />
     <state width="1877" height="213" key="GridCell.Tab.0.center" timestamp="1597716157498">
       <screen x="0" y="0" width="1920" height="1160" />
     </state>
     <state width="1877" height="186" key="GridCell.Tab.0.center/0.0.1200.1880/-1920.676.1920.1040@-1920.676.1920.1040" timestamp="1597673434447" />
-    <state width="1493" height="210" key="GridCell.Tab.0.center/0.0.1536.824@0.0.1536.824" timestamp="1596208636174" />
     <state width="1877" height="277" key="GridCell.Tab.0.center/1920.-339.1200.1880/-1920.337.1920.1040/0.0.1920.1160@-1920.337.1920.1040" timestamp="1596500085003" />
     <state width="1877" height="213" key="GridCell.Tab.0.center/1920.-339.1200.1880/-1920.337.1920.1040/0.0.1920.1160@0.0.1920.1160" timestamp="1597716157498" />
     <state width="1877" height="213" key="GridCell.Tab.0.left" timestamp="1597716157498">
       <screen x="0" y="0" width="1920" height="1160" />
     </state>
     <state width="1877" height="186" key="GridCell.Tab.0.left/0.0.1200.1880/-1920.676.1920.1040@-1920.676.1920.1040" timestamp="1597673434446" />
-    <state width="1493" height="210" key="GridCell.Tab.0.left/0.0.1536.824@0.0.1536.824" timestamp="1596208636174" />
     <state width="1877" height="277" key="GridCell.Tab.0.left/1920.-339.1200.1880/-1920.337.1920.1040/0.0.1920.1160@-1920.337.1920.1040" timestamp="1596500085003" />
     <state width="1877" height="213" key="GridCell.Tab.0.left/1920.-339.1200.1880/-1920.337.1920.1040/0.0.1920.1160@0.0.1920.1160" timestamp="1597716157498" />
     <state width="1877" height="213" key="GridCell.Tab.0.right" timestamp="1597716157498">
       <screen x="0" y="0" width="1920" height="1160" />
     </state>
     <state width="1877" height="186" key="GridCell.Tab.0.right/0.0.1200.1880/-1920.676.1920.1040@-1920.676.1920.1040" timestamp="1597673434447" />
-    <state width="1493" height="210" key="GridCell.Tab.0.right/0.0.1536.824@0.0.1536.824" timestamp="1596208636175" />
     <state width="1877" height="277" key="GridCell.Tab.0.right/1920.-339.1200.1880/-1920.337.1920.1040/0.0.1920.1160@-1920.337.1920.1040" timestamp="1596500085003" />
     <state width="1877" height="213" key="GridCell.Tab.0.right/1920.-339.1200.1880/-1920.337.1920.1040/0.0.1920.1160@0.0.1920.1160" timestamp="1597716157498" />
-    <state width="189" height="325" key="HiddenNamespacesPopup" timestamp="1595766090336">
-      <screen x="0" y="0" width="1536" height="824" />
-    </state>
-    <state width="189" height="325" key="HiddenNamespacesPopup/0.0.1536.824@0.0.1536.824" timestamp="1595766090336" />
-    <state x="442" y="222" key="Vcs.Push.Dialog.v2" timestamp="1603356174210">
+    <state x="442" y="222" key="Vcs.Push.Dialog.v2" timestamp="1603358827696">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
     <state x="-1368" y="957" key="Vcs.Push.Dialog.v2/0.0.1200.1880/-1920.676.1920.1040@-1920.676.1920.1040" timestamp="1597673426708" />
-    <state x="442" y="222" key="Vcs.Push.Dialog.v2/0.0.1536.824@0.0.1536.824" timestamp="1603356174210" />
+    <state x="442" y="222" key="Vcs.Push.Dialog.v2/0.0.1536.824@0.0.1536.824" timestamp="1603358827696" />
     <state x="552" y="313" key="Vcs.Push.Dialog.v2/0.0.1920.1160/1920.-339.1200.1880/-1920.337.1920.1040@0.0.1920.1160" timestamp="1597755545580" />
-    <state x="552" y="313" key="Vcs.Push.Dialog.v2/1920.-339.1200.1880/-1920.337.1920.1040/0.0.1920.1160@0.0.1920.1160" timestamp="1596316082244" />
-    <state x="830" y="467" width="316" height="244" key="com.intellij.database.actions.DdlActions$DeleteProvider2$1" timestamp="1596316964967">
-      <screen x="0" y="0" width="1920" height="1160" />
-    </state>
-    <state x="830" y="467" width="316" height="244" key="com.intellij.database.actions.DdlActions$DeleteProvider2$1/1920.-339.1200.1880/-1920.337.1920.1040/0.0.1920.1160@0.0.1920.1160" timestamp="1596316964967" />
-    <state x="379" y="101" key="com.intellij.openapi.editor.actions.MultiplePasteAction$ClipboardContentChooser" timestamp="1596195821762">
+    <state x="552" y="191" width="672" height="299" key="search.everywhere.popup" timestamp="1605011937720">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state x="379" y="101" key="com.intellij.openapi.editor.actions.MultiplePasteAction$ClipboardContentChooser/0.0.1536.824@0.0.1536.824" timestamp="1596195821762" />
-    <state x="548" y="197" width="672" height="297" key="run.anything.popup" timestamp="1596208376633">
-      <screen x="0" y="0" width="1536" height="824" />
-    </state>
-    <state x="548" y="197" width="672" height="297" key="run.anything.popup/0.0.1536.824@0.0.1536.824" timestamp="1596208376633" />
-    <state x="552" y="191" width="672" height="299" key="search.everywhere.popup" timestamp="1603357864481">
-      <screen x="0" y="0" width="1536" height="824" />
-    </state>
-    <state x="552" y="191" width="672" height="299" key="search.everywhere.popup/0.0.1536.824@0.0.1536.824" timestamp="1603357864481" />
+    <state x="552" y="191" width="672" height="299" key="search.everywhere.popup/0.0.1536.824@0.0.1536.824" timestamp="1605011937720" />
     <state x="690" y="269" width="672" height="420" key="search.everywhere.popup/0.0.1920.1160/1920.-339.1200.1880/-1920.337.1920.1040@0.0.1920.1160" timestamp="1597755351223" />
     <state x="690" y="269" width="672" height="420" key="search.everywhere.popup/1920.-339.1200.1880/-1920.337.1920.1040/0.0.1920.1160@0.0.1920.1160" timestamp="1597716313747" />
   </component>

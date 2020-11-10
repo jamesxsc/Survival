@@ -17,6 +17,7 @@ import uk.tethys.survival.managers.ShopManager;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Objects;
 
 public class Survival extends JavaPlugin {
 
@@ -54,18 +55,20 @@ public class Survival extends JavaPlugin {
 
         IS_CUSTOM_ITEM = new NamespacedKey(this, "is-custom-item");
 
-        getCommand("claim").setExecutor(new ClaimCommand(this));
-        getCommand("shop").setExecutor(new ShopCommand(this));
-        getCommand("createshop").setExecutor(new CreateShopCommand(this));
+        Objects.requireNonNull(getCommand("claim")).setExecutor(new ClaimCommand(this));
+        Objects.requireNonNull(getCommand("shop")).setExecutor(new ShopCommand(this));
+        Objects.requireNonNull(getCommand("createshop")).setExecutor(new CreateShopCommand(this));
 
-        getCommand("drcl").setExecutor(new DRCLCommand(this));
+        Objects.requireNonNull(getCommand("drcl")).setExecutor(new DRCLCommand(this));
 
+        getServer().getPluginManager().registerEvents(new DamageInternalEntityListener(this), this);
         getServer().getPluginManager().registerEvents(new ClaimListener(this), this);
         getServer().getPluginManager().registerEvents(new CreateShopListener(this), this);
         economyListener = new EconomyListener(this);
         getServer().getPluginManager().registerEvents(this.economyListener, this);
         getServer().getPluginManager().registerEvents(new CentralShopListener(this), this);
         getServer().getPluginManager().registerEvents(new BuildersWandListener(), this);
+        getServer().getPluginManager().registerEvents(new DropInterceptListener(), this);
 
         // managers
         claimManager = new ClaimManager(this);
@@ -75,6 +78,7 @@ public class Survival extends JavaPlugin {
 
         // todo TEMP
         Bukkit.getScheduler().runTaskTimer(this, new BuildersWandItem.PreviewTask(), 200, 0);
+        Bukkit.getScheduler().runTaskTimer(this, new DamageInternalEntityListener.KillTask(), 1000, 0);
     }
 
     @Override
