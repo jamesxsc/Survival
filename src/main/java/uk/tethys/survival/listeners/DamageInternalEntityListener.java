@@ -33,13 +33,14 @@ public class DamageInternalEntityListener implements Listener {
         public void run() {
             for (World world : Bukkit.getWorlds()) {
                 for (Entity entity : world.getEntities()) {
+
                     PersistentDataContainer pdc = entity.getPersistentDataContainer();
                     if (pdc.has(DamageInternalEntityListener.INTERNAL_ENTITY, PersistentDataType.LONG)) {
-                        Long killAfterMillis = pdc.get(DamageInternalEntityListener.INTERNAL_ENTITY, PersistentDataType.LONG);
 
+                        Long killAfterMillis = pdc.get(DamageInternalEntityListener.INTERNAL_ENTITY, PersistentDataType.LONG);
+                        if (killAfterMillis == null) return;
                         if (System.currentTimeMillis() >= killAfterMillis)
                             entity.remove();
-
                     }
                 }
             }
