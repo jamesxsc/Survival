@@ -15,7 +15,6 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.PlayerLeashEntityEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryMoveItemEvent;
@@ -41,6 +40,8 @@ import uk.tethys.survival.tasks.ClaimTask;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
+
+import static uk.tethys.survival.listeners.DamageInternalEntityListener.INTERNAL_ENTITY;
 
 public class ClaimListener implements Listener {
 
@@ -234,7 +235,7 @@ public class ClaimListener implements Listener {
                     slime.setGlowing(true);
                     slime.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 1000000, 2, true, false));
                     slime.setInvulnerable(true);
-                    slime.getPersistentDataContainer().set(Claim.CLAIM_SLIME_IDENTIFIER, PersistentDataType.BYTE, (byte) 1);
+                    slime.getPersistentDataContainer().set(INTERNAL_ENTITY, PersistentDataType.LONG, System.currentTimeMillis() + 30000);
                 }
 
             }
@@ -254,14 +255,15 @@ public class ClaimListener implements Listener {
         }
     }
 
-    @EventHandler
-    public void onDamageIndicator(EntityDamageEvent event) {
-        PersistentDataContainer pdc = event.getEntity().getPersistentDataContainer();
-
-        if (pdc.has(Claim.CLAIM_SLIME_IDENTIFIER, PersistentDataType.BYTE)) {
-            event.setCancelled(true);
-        }
-    }
+//    @Deprecated
+//    @EventHandler
+//    public void onDamageIndicator(EntityDamageEvent event) {
+//        PersistentDataContainer pdc = event.getEntity().getPersistentDataContainer();
+//
+//        if (pdc.has(Claim.CLAIM_SLIME_IDENTIFIER, PersistentDataType.BYTE)) {
+//            event.setCancelled(true);
+//        }
+//    }
 
     private void handleView() {
 
@@ -287,7 +289,7 @@ public class ClaimListener implements Listener {
         for (Claim.Flag flag : Claim.Flag.values()) {
             ItemStack selectFlag = new ItemStack(flag.getIcon());
             ItemMeta meta = selectFlag.getItemMeta();
-            meta.setDisplayName(ChatColor.RESET + flag.getDislayName());
+            meta.setDisplayName(ChatColor.RESET + flag.getDisplayName());
             PersistentDataContainer container = meta.getPersistentDataContainer();
             container.set(Claim.CLAIM_FLAG_NAME, PersistentDataType.STRING, flag.name());
             selectFlag.setItemMeta(meta);
@@ -374,7 +376,7 @@ public class ClaimListener implements Listener {
                     }
                 }
 
-                Inventory modifyFlag = Bukkit.createInventory(null, 54, "Modify Flag - " + Claim.Flag.valueOf(flagName).getDislayName());
+                Inventory modifyFlag = Bukkit.createInventory(null, 54, "Modify Flag - " + Claim.Flag.valueOf(flagName).getDisplayName());
 
                 ItemStack[] contents = new ItemStack[54];
                 ItemStack partner = new ItemStack(Material.CHAIN);
@@ -577,6 +579,34 @@ public class ClaimListener implements Listener {
     public void onShear(PlayerShearEntityEvent event) {
         if (isDenied(event.getPlayer(), event.getEntity().getLocation(), "")) {
             event.setCancelled(true);
+        }
+    }
+
+    // check for arson
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onArson(PlayerInteractEvent event) {
+        if (event.getItem() != null) {
+            Material itemType = event.getItem().getType();
+
+            if (itemType == Material.FLINT_AND_STEEL || itemType == Material.FIRE_CHARGE) {
+                if (isDenied(event.getPlayer(), event.getClickedBlock() == null ? event.getPlayer().getLocation() : event.getClickedBlock().getLocation(), "")) {
+                    event.setCancelled(true);
+                }
+            }
+        }
+    }
+
+    // check for unauthorised launching of fireworks
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onLaunch(PlayerInteractEvent event) {
+        if (event.getItem() != null) {
+            Material itemType = event.getItem().getType();
+
+            if (itemType == Material.FIREWORK_ROCKET) {
+                if (isDenied(event.getPlayer(), event.getClickedBlock() == null ? event.getPlayer().getLocation() : event.getClickedBlock().getLocation(), "")) {
+                    event.setCancelled(true);
+                }
+            }
         }
     }
 

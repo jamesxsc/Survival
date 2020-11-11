@@ -25,7 +25,6 @@ public class Claim implements Serializable {
     public static NamespacedKey CLAIM_TOOL_MODE;
     public static NamespacedKey CLAIM_FLAG_NAME;
     public static NamespacedKey CLAIM_FLAG_AUTH_LEVEL;
-    public static NamespacedKey CLAIM_SLIME_IDENTIFIER;
 
     private int id;
 
@@ -107,21 +106,22 @@ public class Claim implements Serializable {
 
         BREAK(BlockBreakEvent.class, null, Material.NETHERITE_PICKAXE, "Break Blocks", true, false, false),
         PLACE(BlockPlaceEvent.class, null, Material.BRICKS, "Place Blocks", true, false, false),
+        // TODO input others
         ;
 
         private final Class<? extends Event> type;
         private final String data;
         private final Material icon;
-        private final String dislayName;
+        private final String displayName;
         private final boolean defaultPartner;
         private final boolean defaultLocal;
         private final boolean defaultWanderer;
 
-        <T extends Event> Flag(Class<T> type, String data, Material icon, String dislayName, boolean defaultPartner, boolean defaultLocal, boolean defaultWanderer) {
+        <T extends Event> Flag(Class<T> type, String data, Material icon, String displayName, boolean defaultPartner, boolean defaultLocal, boolean defaultWanderer) {
             this.type = type;
             this.data = data;
             this.icon = icon;
-            this.dislayName = dislayName;
+            this.displayName = displayName;
             this.defaultPartner = defaultPartner;
             this.defaultLocal = defaultLocal;
             this.defaultWanderer = defaultWanderer;
@@ -139,8 +139,8 @@ public class Claim implements Serializable {
             return icon;
         }
 
-        public String getDislayName() {
-            return dislayName;
+        public String getDisplayName() {
+            return displayName;
         }
 
         public boolean isDefaultPartner() {
@@ -191,19 +191,11 @@ public class Claim implements Serializable {
     }
 
     public boolean overlapsX(Claim claim) {
-        SerializableLocation min1 = claim.corner1;
-        SerializableLocation max1 = claim.corner2;
-        SerializableLocation min2 = corner1;
-        SerializableLocation max2 = corner2;
-        return !(min1.getX() > max2.getX() && max1.getX() > min2.getX());
+        return !(claim.corner1.getX() > corner2.getX() && claim.corner2.getX() > corner1.getX());
     }
 
     public boolean overlapsZ(Claim claim) {
-        SerializableLocation min1 = claim.corner1;
-        SerializableLocation max1 = claim.corner2;
-        SerializableLocation min2 = corner1;
-        SerializableLocation max2 = corner2;
-        return !(min1.getZ() > max2.getZ() && max1.getZ() > min2.getZ());
+        return !(claim.corner1.getZ() > corner2.getZ() && claim.corner2.getZ() > corner1.getZ());
     }
 
     public Set<AccessFlag> getFlags() throws IllegalStateException {

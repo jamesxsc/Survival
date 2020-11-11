@@ -22,12 +22,12 @@ public class ClaimSeeder implements Seeder {
                 Location center = world.getSpawnLocation();
                 int r = 200;
 
-                Location corner1 = center;
+                Location corner1 = center.clone();
                 corner1.setX(corner1.getX() - (double) r / 2);
                 corner1.setY(0);
                 corner1.setZ(corner1.getZ() - (double) r / 2);
 
-                Location corner2 = center;
+                Location corner2 = center.clone();
                 corner2.setX(corner2.getX() + (double) r / 2);
                 corner2.setY(256);
                 corner2.setZ(corner2.getZ() + (double) r / 2);

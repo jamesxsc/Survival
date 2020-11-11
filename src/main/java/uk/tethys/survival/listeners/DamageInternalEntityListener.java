@@ -38,7 +38,7 @@ public class DamageInternalEntityListener implements Listener {
                     if (pdc.has(DamageInternalEntityListener.INTERNAL_ENTITY, PersistentDataType.LONG)) {
 
                         Long killAfterMillis = pdc.get(DamageInternalEntityListener.INTERNAL_ENTITY, PersistentDataType.LONG);
-                        if (killAfterMillis == null) return;
+                        if (killAfterMillis == null || killAfterMillis == -1L) return;
                         if (System.currentTimeMillis() >= killAfterMillis)
                             entity.remove();
                     }
