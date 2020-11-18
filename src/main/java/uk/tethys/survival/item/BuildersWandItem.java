@@ -110,7 +110,7 @@ public class BuildersWandItem implements CustomItem {
                         if (id.equals(CustomItems.BUILDERS_WAND.getId())) {
                             // is holding the builder's wand
 
-                            Block targeted = player.getTargetBlock(null, 4); //todo what is default reach?
+                            Block targeted = player.getTargetBlock(null, 5);
 
                             BlockFace facing = getLookingAt(player);
 
@@ -146,7 +146,7 @@ public class BuildersWandItem implements CustomItem {
     }
 
     public static BlockFace getLookingAt(Player player) {
-        List<Block> lastTwoTargetBlocks = player.getLastTwoTargetBlocks(null, 4); //todo same reach issue
+        List<Block> lastTwoTargetBlocks = player.getLastTwoTargetBlocks(null, 5);
         if (lastTwoTargetBlocks.size() != 2 || !lastTwoTargetBlocks.get(1).getType().isOccluding())
             return null;
         Block targetBlock = lastTwoTargetBlocks.get(1);

@@ -15,6 +15,7 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.ExplosionPrimeEvent;
 import org.bukkit.event.entity.PlayerLeashEntityEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryMoveItemEvent;
@@ -582,6 +583,7 @@ public class ClaimListener implements Listener {
         }
     }
 
+    // TODO check for nearby explosions
     // check for arson
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onArson(PlayerInteractEvent event) {
@@ -594,6 +596,10 @@ public class ClaimListener implements Listener {
                 }
             }
         }
+    }
+    @EventHandler
+    public void onPrime(ExplosionPrimeEvent event) {
+        // todo find igniter here
     }
 
     // check for unauthorised launching of fireworks

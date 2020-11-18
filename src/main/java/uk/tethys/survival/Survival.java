@@ -12,6 +12,8 @@ import uk.tethys.survival.item.BuildersWandItem;
 import uk.tethys.survival.item.CustomItems;
 import uk.tethys.survival.listeners.*;
 import uk.tethys.survival.managers.ClaimManager;
+import uk.tethys.survival.managers.DeathManager;
+import uk.tethys.survival.managers.EconomyManager;
 import uk.tethys.survival.managers.ShopManager;
 
 import java.io.IOException;
@@ -26,6 +28,8 @@ public class Survival extends JavaPlugin {
     //managers
     private ClaimManager claimManager;
     private ShopManager shopManager;
+    private EconomyManager economyManager;
+    private DeathManager deathManager;
 
     private EconomyListener economyListener;
 
@@ -69,10 +73,14 @@ public class Survival extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new CentralShopListener(this), this);
         getServer().getPluginManager().registerEvents(new BuildersWandListener(), this);
         getServer().getPluginManager().registerEvents(new DropInterceptListener(), this);
+        getServer().getPluginManager().registerEvents(new PlayerDeathListener(), this);
+        getServer().getPluginManager().registerEvents(new PlayerRespawnListener(this), this);
 
         // managers
         claimManager = new ClaimManager(this);
         shopManager = new ShopManager(this);
+        economyManager = new EconomyManager(this);
+        deathManager = new DeathManager(this);
 
         CustomItems.registerRecipes();
 
@@ -92,6 +100,14 @@ public class Survival extends JavaPlugin {
 
     public Connection getDBConnection() throws SQLException {
         return this.sqlManager.getConnection();
+    }
+
+    public EconomyManager getEconomyManager() {
+        return economyManager;
+    }
+
+    public DeathManager getDeathManager() {
+        return deathManager;
     }
 
 }

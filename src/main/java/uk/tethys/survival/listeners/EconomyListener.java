@@ -31,6 +31,7 @@ public class EconomyListener implements Listener {
     }
 
     @EventHandler
+    // todo DO NOT INCLUDE THIS ON PRODUCTION LAUNCH!!!
     public void onJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
         Date lastPlayed = new Date(player.getLastPlayed());

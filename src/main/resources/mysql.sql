@@ -51,3 +51,16 @@ CREATE TABLE IF NOT EXISTS transactions (
     `desc`      TINYTEXT        NOT NULL,
     PRIMARY KEY (payer, payee)
 ) DEFAULT CHARSET = utf8mb4;
+
+CREATE TABLE IF NOT EXISTS inventory_cache (
+    `holder`        VARCHAR(36) NOT NULL,
+    `last_stored`   TIMESTAMP   NOT NULL,
+    `contents`      BIGTEXT     NOT NULL,
+    `armor`         BIGTEXT     NOT NULL,
+    `exp`           INT         NOT NULL,
+    `x`             INT         NOT NULL,
+    `y`             INT         NOT NULL,
+    `z`             INT         NOT NULL,
+    `world`         VARCHAR(36) NOT NULL,
+    PRIMARY KEY (holder)
+)

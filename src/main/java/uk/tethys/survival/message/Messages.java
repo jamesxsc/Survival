@@ -16,7 +16,7 @@ public class Messages {
     public static final String CLAIM_CREATE_SUCCESS = "claim create success";
     public static final String CLAIM_CREATE_FAIL = "claim overlaps another one or the db is broken";
     public static final String BUY_PRICE_PROMPT = "buy price prompt";
-    public static final String NFE_LOOP_OR_EXIT = "nfe loop or exit";
+    public static final String NFE_LOOP_OR_EXIT = "not a number loop or exit";
     public static final String SELL_PRICE_PROMPT = "sell price prompt";
     public static final String NO_BUY_OR_SELL = "no buy or sell";
     public static final String CREATING_SHOP = "creating shop";
