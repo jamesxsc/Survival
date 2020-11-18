@@ -57,10 +57,12 @@ public class PlayerRespawnListener implements Listener {
                     postMortem.setContents(getPostMortenContents());
 
                     // todo remind how to open if accidentally closed
-                    player.openInventory(postMortem);
+                    player.sendMessage("use /... to access this menu");
+                    Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> player.openInventory(postMortem), 0L);
                 } else {
                     handleDBException(player);
                 }
+                rs.close();
             } catch (SQLException ex) {
                 handleDBException(player);
 //            } catch (IOException e) {
@@ -76,11 +78,16 @@ public class PlayerRespawnListener implements Listener {
 
         Player player = (Player) event.getWhoClicked();
         if (plugin.getDeathManager().getLatestDeath(player).isPresent()) {
+            System.out.println("death is present");
             if (event.getView().getTitle().equals("Death")) {
 //            if (event.getView().getTitle().equals("Death at " + new Date(plugin.getDeathManager().getDeaths().get(player.getUniqueId())).toGMTString())) {
                 ItemStack selected = (event.getCursor() == null || event.getCursor().getType() == Material.AIR) ? event.getCurrentItem() : event.getCursor();
                 if (selected == null || selected.getType() == Material.AIR)
                     return;
+
+                System.out.println("not got air");
+
+                event.setCancelled(true);
 
                 boolean success;
                 switch (selected.getType()) {
@@ -120,9 +127,9 @@ public class PlayerRespawnListener implements Listener {
                         return;
                 }
 
-                event.setCancelled(true);
                 player.closeInventory();
-                plugin.getDeathManager().getDeaths().remove(player.getUniqueId());
+                // todo clear any cache of death
+//                plugin.getDeathManager().getDeaths().remove(player.getUniqueId());
 
                 if (!success) {
                     handleDBException(player);
@@ -181,8 +188,9 @@ public class PlayerRespawnListener implements Listener {
                 inv = InventorySerializer.itemStackArrayFromBase64(rs.getString("contents"));
                 armor = InventorySerializer.itemStackArrayFromBase64(rs.getString("armor"));
                 exp = rs.getInt("exp");
-                millis = rs.getTimestamp("last_stored").getTime();
+                millis = rs.getLong("last_stored");
             } else return false;
+            rs.close();
         } catch (SQLException | IOException ex) {
             // catch db exception or any other weird error whilst decoding base64
             return false;
@@ -224,7 +232,7 @@ public class PlayerRespawnListener implements Listener {
                 ChatColor.DARK_GRAY + "other players."
         ));
         deposit.setItemMeta(depositMeta);
-        stacks[14] = deposit;
+        stacks[15] = deposit;
 
         ItemStack fill = new ItemStack(Material.BLACK_STAINED_GLASS_PANE);
         ItemMeta fillMeta = fill.getItemMeta();

@@ -25,7 +25,6 @@ public class ClaimCommand implements CommandExecutor {
         Claim.CLAIM_TOOL_MODE = new NamespacedKey(plugin, "claim-tool-mode");
         Claim.CLAIM_FLAG_NAME = new NamespacedKey(plugin, "claim-flag-name");
         Claim.CLAIM_FLAG_AUTH_LEVEL = new NamespacedKey(plugin, "claim-flag-auth-level");
-        Claim.CLAIM_SLIME_IDENTIFIER = new NamespacedKey(plugin, "claim-slime-identifier");
     }
 
     @SuppressWarnings("ConstantConditions")

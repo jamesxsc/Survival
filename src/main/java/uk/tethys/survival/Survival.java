@@ -61,7 +61,7 @@ public class Survival extends JavaPlugin {
 
         Objects.requireNonNull(getCommand("claim")).setExecutor(new ClaimCommand(this));
         Objects.requireNonNull(getCommand("shop")).setExecutor(new ShopCommand(this));
-        Objects.requireNonNull(getCommand("createshop")).setExecutor(new CreateShopCommand(this));
+//        Objects.requireNonNull(getCommand("createshop")).setExecutor(new CreateShopCommand(this));
 
         Objects.requireNonNull(getCommand("drcl")).setExecutor(new DRCLCommand(this));
 

@@ -54,9 +54,9 @@ CREATE TABLE IF NOT EXISTS transactions (
 
 CREATE TABLE IF NOT EXISTS inventory_cache (
     `holder`        VARCHAR(36) NOT NULL,
-    `last_stored`   TIMESTAMP   NOT NULL,
-    `contents`      BIGTEXT     NOT NULL,
-    `armor`         BIGTEXT     NOT NULL,
+    `last_stored`   TRAILING    NOT NULL,
+    `contents`      LONGTEXT    NOT NULL,
+    `armor`         LONGTEXT    NOT NULL,
     `exp`           INT         NOT NULL,
     `x`             INT         NOT NULL,
     `y`             INT         NOT NULL,

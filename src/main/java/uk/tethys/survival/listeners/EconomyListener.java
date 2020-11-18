@@ -29,24 +29,24 @@ public class EconomyListener implements Listener {
     public Set<UUID> getAllowed() {
         return allowed;
     }
-
-    @EventHandler
-    // todo DO NOT INCLUDE THIS ON PRODUCTION LAUNCH!!!
-    public void onJoin(PlayerJoinEvent event) {
-        Player player = event.getPlayer();
-        Date lastPlayed = new Date(player.getLastPlayed());
-        if (!lastPlayed.toInstant().truncatedTo(ChronoUnit.DAYS).equals(new Date().toInstant().truncatedTo(ChronoUnit.DAYS))) {
-            allowed.add(player.getUniqueId());
-            // todo fancy message building
-            player.sendMessage("");
-            player.spigot().sendMessage(new ComponentBuilder(player.getDisplayName()).color(ChatColor.DARK_AQUA)
-                    .append(", ").color(ChatColor.AQUA).append("you have not yet claimed your daily logon reward yet! ")
-                    .color(ChatColor.GREEN).append("[Click here to claim now!]").color(ChatColor.BLUE).bold(true)
-                    .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("Click!").create()))
-                    .event(new ClickEvent(ClickEvent.Action.RUN_COMMAND,
-                            "/survival:drcl " + player.getUniqueId().toString())).create());
-            player.sendMessage("");
-        }
-    }
+//
+//    @EventHandler
+//    // todo DO NOT INCLUDE THIS ON PRODUCTION LAUNCH!!!
+//    public void onJoin(PlayerJoinEvent event) {
+//        Player player = event.getPlayer();
+//        Date lastPlayed = new Date(player.getLastPlayed());
+//        if (!lastPlayed.toInstant().truncatedTo(ChronoUnit.DAYS).equals(new Date().toInstant().truncatedTo(ChronoUnit.DAYS))) {
+//            allowed.add(player.getUniqueId());
+//            // todo fancy message building
+//            player.sendMessage("");
+//            player.spigot().sendMessage(new ComponentBuilder(player.getDisplayName()).color(ChatColor.DARK_AQUA)
+//                    .append(", ").color(ChatColor.AQUA).append("you have not yet claimed your daily logon reward yet! ")
+//                    .color(ChatColor.GREEN).append("[Click here to claim now!]").color(ChatColor.BLUE).bold(true)
+//                    .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("Click!").create()))
+//                    .event(new ClickEvent(ClickEvent.Action.RUN_COMMAND,
+//                            "/survival:drcl " + player.getUniqueId().toString())).create());
+//            player.sendMessage("");
+//        }
+//    }
 
 }

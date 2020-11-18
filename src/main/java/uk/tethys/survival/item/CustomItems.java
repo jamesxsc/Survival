@@ -11,7 +11,7 @@ public class CustomItems {
     public static BuildersWandItem BUILDERS_WAND = new BuildersWandItem();
 
     public static void registerRecipes() {
-        Bukkit.addRecipe(BUILDERS_WAND.getRecipe());
+//        Bukkit.addRecipe(BUILDERS_WAND.getRecipe());
     }
 
 }

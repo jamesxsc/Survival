@@ -42,6 +42,23 @@ public class DeathManager {
 
     public Optional<Death> getLatestDeath(UUID player) {
         // TODO may need inverting
+        try (Connection connection = Survival.INSTANCE.getDBConnection()) {
+            ResultSet rs = connection.prepareStatement(String.format("SELECT * FROM `inventory_cache` WHERE `holder` = '%s'",
+                    player.toString())).executeQuery();
+            if (rs.next()) {
+                return Optional.of(new Death(InventorySerializer.itemStackArrayFromBase64(rs.getString("contents")),
+                        InventorySerializer.itemStackArrayFromBase64(rs.getString("armor")),
+                        rs.getInt("exp"),
+                        UUID.fromString(rs.getString("holder")),
+                        rs.getLong("last_stored")));
+            }
+            rs.close();
+        } catch (SQLException ex) {
+            // todo stub
+        } catch (IOException e) {
+            // todo stub
+        }
+
         return this.deaths.stream().filter((d) -> d.getPlayer().equals(player)).min((o1, o2) -> (int) (o1.getTimestamp() - o2.getTimestamp()));
     }
 
@@ -59,9 +76,11 @@ public class DeathManager {
                 inv = InventorySerializer.itemStackArrayFromBase64(rs.getString("contents"));
                 armor = InventorySerializer.itemStackArrayFromBase64(rs.getString("armor"));
                 exp = rs.getInt("exp");
-                millis = rs.getTimestamp("last_stored").getTime();
+                millis = rs.getLong("last_stored");
             } else return false;
+            rs.close();
         } catch (SQLException | IOException ex) {
+            ex.printStackTrace();
             // catch db exception or any other weird error whilst decoding base64
             return false;
         }
@@ -74,6 +93,8 @@ public class DeathManager {
             newHeight = deathLoc.getWorld().getHighestBlockYAt(deathLoc) + 1;
         }
         deathLoc.setY(newHeight);
+
+        System.out.println(newHeight);
 
         // now we can actually summon the grave
         deathLoc.getBlock().setType(Material.CHEST);
