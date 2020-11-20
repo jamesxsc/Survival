@@ -485,7 +485,7 @@ public class ClaimListener implements Listener {
     public void onOpen(PlayerInteractEvent event) {
         if (event.getClickedBlock() != null &&
                 event.getClickedBlock().getState() instanceof Container &&
-                isDenied(event.getPlayer(), event.getClickedBlock().getLocation(), "")) {
+                isDenied(event.getPlayer(), event.getClickedBlock().getLocation(), "OPEN_CONTAINER")) {
             event.setCancelled(true);
         }
     }
@@ -495,7 +495,7 @@ public class ClaimListener implements Listener {
     public void onRedstoneUse(PlayerInteractEvent event) {
         if (event.getClickedBlock() != null &&
                 event.getClickedBlock().getBlockData() instanceof Powerable &&
-                isDenied(event.getPlayer(), event.getClickedBlock().getLocation(), "")) {
+                isDenied(event.getPlayer(), event.getClickedBlock().getLocation(), "REDSTONE")) {
             event.setCancelled(true);
         }
     }
@@ -503,7 +503,7 @@ public class ClaimListener implements Listener {
     // prevent unauthorised triggering of raids
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onBreak(RaidTriggerEvent event) {
-        if (isDenied(event.getPlayer(), event.getRaid().getLocation(), "")) {
+        if (isDenied(event.getPlayer(), event.getRaid().getLocation(), "TRIGGER_RAID")) {
             event.setCancelled(true);
         }
     }
@@ -512,7 +512,7 @@ public class ClaimListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onDestroy(VehicleDestroyEvent event) {
         if (event.getAttacker() instanceof Player &&
-                isDenied((Player) event.getAttacker(), event.getVehicle().getLocation(), "")) {
+                isDenied((Player) event.getAttacker(), event.getVehicle().getLocation(), "DESTROY_VEHICLE")) {
             event.setCancelled(true);
         }
     }
@@ -521,7 +521,7 @@ public class ClaimListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onEnter(VehicleEnterEvent event) {
         if (event.getEntered() instanceof Player &&
-                isDenied((Player) event.getEntered(), event.getVehicle().getLocation(), "")) {
+                isDenied((Player) event.getEntered(), event.getVehicle().getLocation(), "ENTER_VEHICLE")) {
             event.setCancelled(true);
         }
     }
@@ -530,7 +530,7 @@ public class ClaimListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onDamage(EntityDamageByEntityEvent event) {
         if (event.getDamager() instanceof Player &&
-                isDenied((Player) event.getDamager(), event.getEntity().getLocation(), "")) {
+                isDenied((Player) event.getDamager(), event.getEntity().getLocation(), "DAMAGE_ENTITY")) {
             event.setCancelled(true);
         }
     }
@@ -538,7 +538,7 @@ public class ClaimListener implements Listener {
     // check for book robbery
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onTake(PlayerTakeLecternBookEvent event) {
-        if (isDenied(event.getPlayer(), event.getLectern().getLocation(), "")) {
+        if (isDenied(event.getPlayer(), event.getLectern().getLocation(), "TAKE_LECTERN_BOOK")) {
             event.setCancelled(true);
         }
     }
@@ -546,7 +546,7 @@ public class ClaimListener implements Listener {
     // check for unauthorised bed usage
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onEnter(PlayerBedEnterEvent event) {
-        if (isDenied(event.getPlayer(), event.getBed().getLocation(), "")) {
+        if (isDenied(event.getPlayer(), event.getBed().getLocation(), "USE_BED")) {
             event.setCancelled(true);
         }
     }
@@ -554,7 +554,7 @@ public class ClaimListener implements Listener {
     // check for fluid robbery
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onFill(PlayerBucketFillEvent event) {
-        if (isDenied(event.getPlayer(), event.getBlock().getLocation(), "")) {
+        if (isDenied(event.getPlayer(), event.getBlock().getLocation(), "FILL_BUCKETS")) {
             event.setCancelled(true);
         }
     }
@@ -562,7 +562,7 @@ public class ClaimListener implements Listener {
     // check for unauthorised entity interactions
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onInteract(PlayerInteractEntityEvent event) {
-        if (isDenied(event.getPlayer(), event.getRightClicked().getLocation(), "")) {
+        if (isDenied(event.getPlayer(), event.getRightClicked().getLocation(), "INTERACT_ENTITY")) {
             event.setCancelled(true);
         }
     }
@@ -570,7 +570,7 @@ public class ClaimListener implements Listener {
     // check for unauthorised leashing
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onLeash(PlayerLeashEntityEvent event) {
-        if (isDenied(event.getPlayer(), event.getEntity().getLocation(), "")) {
+        if (isDenied(event.getPlayer(), event.getEntity().getLocation(), "LEASH_ENTITY")) {
             event.setCancelled(true);
         }
     }
@@ -578,12 +578,11 @@ public class ClaimListener implements Listener {
     // check for unauthorised shearing
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onShear(PlayerShearEntityEvent event) {
-        if (isDenied(event.getPlayer(), event.getEntity().getLocation(), "")) {
+        if (isDenied(event.getPlayer(), event.getEntity().getLocation(), "SHEAR_ENTITY")) {
             event.setCancelled(true);
         }
     }
 
-    // TODO check for nearby explosions
     // check for arson
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onArson(PlayerInteractEvent event) {
@@ -591,12 +590,14 @@ public class ClaimListener implements Listener {
             Material itemType = event.getItem().getType();
 
             if (itemType == Material.FLINT_AND_STEEL || itemType == Material.FIRE_CHARGE) {
-                if (isDenied(event.getPlayer(), event.getClickedBlock() == null ? event.getPlayer().getLocation() : event.getClickedBlock().getLocation(), "")) {
+                if (isDenied(event.getPlayer(), event.getClickedBlock() == null ? event.getPlayer().getLocation() : event.getClickedBlock().getLocation(), "IGNITE")) {
                     event.setCancelled(true);
                 }
             }
         }
     }
+
+    // TODO check for nearby explosions
     @EventHandler
     public void onPrime(ExplosionPrimeEvent event) {
         // todo find igniter here
@@ -609,7 +610,7 @@ public class ClaimListener implements Listener {
             Material itemType = event.getItem().getType();
 
             if (itemType == Material.FIREWORK_ROCKET) {
-                if (isDenied(event.getPlayer(), event.getClickedBlock() == null ? event.getPlayer().getLocation() : event.getClickedBlock().getLocation(), "")) {
+                if (isDenied(event.getPlayer(), event.getClickedBlock() == null ? event.getPlayer().getLocation() : event.getClickedBlock().getLocation(), "FIREWORK")) {
                     event.setCancelled(true);
                 }
             }

@@ -5,8 +5,6 @@ import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
-import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.block.BlockPlaceEvent;
 import uk.tethys.survival.Survival;
 import uk.tethys.survival.util.SerializableLocation;
 
@@ -104,22 +102,35 @@ public class Claim implements Serializable {
 
     public enum Flag {
 
-        BREAK(BlockBreakEvent.class, null, Material.NETHERITE_PICKAXE, "Break Blocks", true, false, false),
-        PLACE(BlockPlaceEvent.class, null, Material.BRICKS, "Place Blocks", true, false, false),
+        BREAK("BREAK", Material.NETHERITE_PICKAXE, "Break Blocks", true, false, false),
+        PLACE("PLACE", Material.BRICKS, "Place Blocks", true, false, false),
+        OPEN_CONTAINER("OPEN_CONTAINER", Material.CHEST, "Open Containers", true, true, false),
+        REDSTONE("REDSTONE", Material.REDSTONE_TORCH, "Use Redstone", true, true, false),
+        TRIGGER_RAID("TRIGGER_RAID", Material.IRON_AXE, "Trigger Raids", true, true, true),
+        DESTROY_VEHICLE("DESTROY_VEHICLE", Material.MINECART, "Break Vehicles", true, true, false),
+        ENTER_VEHICLE("ENTER_VEHICLE", Material.MINECART, "Enter Vehicles", true, true, false),
+        DAMAGE_ENTITY("DAMAGE_ENTITY", Material.GOLDEN_SWORD, "Damage Entities", true, true, false),
+        TAKE_LECTERN_BOOK("TAKE_LECTERN_BOOK", Material.LECTERN, "Take Lectern Books", true, true, false),
+        USE_BED("USE_BED", Material.RED_BED, "Use Beds", true, true, true),
+        FILL_BUCKETS("FILL_BUCKETS", Material.BUCKET, "Fill Buckets", true, true, false),
+        INTERACT_ENTITY("INTERACT_ENTITY", Material.EMERALD, "Interact With Entities", true, true, true),
+        LEASH_ENTITY("LEASH_ENTITY", Material.LEAD, "Leash Entities", true, true, true),
+        SHEAR_ENTITY("SHEAR_ENTITY", Material.SHEARS, "Shear Entities", true, true, false),
+        FIREWORK("FIREWORK", Material.FIREWORK_ROCKET, "Launch Fireworks", true, true, true),
+        IGNITE("IGNITE", Material.FLINT_AND_STEEL, "Start Fires", true, false, false),
+
         // TODO input others
         ;
 
-        private final Class<? extends Event> type;
-        private final String data;
+        private final String type;
         private final Material icon;
         private final String displayName;
         private final boolean defaultPartner;
         private final boolean defaultLocal;
         private final boolean defaultWanderer;
 
-        <T extends Event> Flag(Class<T> type, String data, Material icon, String displayName, boolean defaultPartner, boolean defaultLocal, boolean defaultWanderer) {
+        <T extends Event> Flag(String type, Material icon, String displayName, boolean defaultPartner, boolean defaultLocal, boolean defaultWanderer) {
             this.type = type;
-            this.data = data;
             this.icon = icon;
             this.displayName = displayName;
             this.defaultPartner = defaultPartner;
@@ -127,12 +138,8 @@ public class Claim implements Serializable {
             this.defaultWanderer = defaultWanderer;
         }
 
-        public Class<? extends Event> getType() {
+        public String getType() {
             return type;
-        }
-
-        public String getData() {
-            return data;
         }
 
         public Material getIcon() {

@@ -106,7 +106,6 @@ public class DeathManager {
         deathLoc.getBlock().setMetadata("grave_exp", new FixedMetadataValue(plugin, exp));
         deathLoc.getBlock().setMetadata("grave_millis", new FixedMetadataValue(plugin, millis));
         return true;
-        // todo listen for right click on this chest then return contents
     }
 
     public static class Death {

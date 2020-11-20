@@ -46,17 +46,11 @@ public class PlayerRespawnListener implements Listener {
                 ResultSet rs = connection.prepareStatement(String.format("SELECT * FROM `inventory_cache` WHERE `holder` = '%s'",
                         player.getUniqueId().toString())).executeQuery();
                 if (rs.next()) {
-//
-//                    ItemStack[] contents = InventorySerializer.itemStackArrayFromBase64(rs.getString("contents"));
-//                    ItemStack[] armor = InventorySerializer.itemStackArrayFromBase64(rs.getString("armor"));
-//                    player.getInventory().setContents(contents);
-//                    player.getInventory().setArmorContents(armor);
-                    //todo display time better
+                    //todo display time better if were even doing this?
                     Inventory postMortem = Bukkit.createInventory(null, 27, "Death");
-//                    Inventory postMortem = Bukkit.createInventory(null, 27, "Death at " + rs.getTimestamp("last_stored").toGMTString());
                     postMortem.setContents(getPostMortenContents());
 
-                    // todo remind how to open if accidentally closed
+                    // todo remind how to open if accidentally closed - impl comand!!
                     player.sendMessage("use /... to access this menu");
                     Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> player.openInventory(postMortem), 0L);
                 } else {
@@ -65,8 +59,6 @@ public class PlayerRespawnListener implements Listener {
                 rs.close();
             } catch (SQLException ex) {
                 handleDBException(player);
-//            } catch (IOException e) {
-//                player.sendMessage("Error deserializing inventory. Report this immediately.");
             }
         }
     }
@@ -128,7 +120,7 @@ public class PlayerRespawnListener implements Listener {
                 }
 
                 player.closeInventory();
-                // todo clear any cache of death
+                // todo clear any cache of death !!
 //                plugin.getDeathManager().getDeaths().remove(player.getUniqueId());
 
                 if (!success) {
@@ -207,7 +199,7 @@ public class PlayerRespawnListener implements Listener {
 
     private void handleDBException(Player respawned) {
         respawned.sendMessage("Your inventory failed to save... it will be restored automatically");
-        // todo restore from runtime
+        // todo restore from runtime!!
     }
 
 
