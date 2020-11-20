@@ -6,6 +6,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
+import org.bukkit.scheduler.BukkitRunnable;
 import uk.tethys.survival.Survival;
 import uk.tethys.survival.util.InventorySerializer;
 
@@ -72,7 +73,7 @@ public class DeathManager {
         try (Connection connection = Survival.INSTANCE.getDBConnection()) {
             ResultSet rs = connection.prepareStatement(String.format("SELECT * FROM `inventory_cache` WHERE `holder` = '%s'", player.getUniqueId().toString())).executeQuery();
             if (rs.next()) {
-                deathLoc = new Location(Bukkit.getWorld(UUID.fromString(rs.getString("world"))), rs.getInt("x"), rs.getInt("y"), rs.getInt("x"));
+                deathLoc = new Location(Bukkit.getWorld(UUID.fromString(rs.getString("world"))), rs.getInt("x"), rs.getInt("y"), rs.getInt("z"));
                 inv = InventorySerializer.itemStackArrayFromBase64(rs.getString("contents"));
                 armor = InventorySerializer.itemStackArrayFromBase64(rs.getString("armor"));
                 exp = rs.getInt("exp");
@@ -104,7 +105,6 @@ public class DeathManager {
         deathLoc.getBlock().setMetadata("grave_armor", new FixedMetadataValue(plugin, armor));
         deathLoc.getBlock().setMetadata("grave_exp", new FixedMetadataValue(plugin, exp));
         deathLoc.getBlock().setMetadata("grave_millis", new FixedMetadataValue(plugin, millis));
-
         return true;
         // todo listen for right click on this chest then return contents
     }

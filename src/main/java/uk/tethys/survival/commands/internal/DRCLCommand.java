@@ -2,6 +2,7 @@ package uk.tethys.survival.commands.internal;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -33,6 +34,7 @@ public class DRCLCommand implements CommandExecutor {
             commandSender.sendMessage(Messages.PLAYER_ONLY);
             return true;
         }
+
         Player player = (Player) commandSender;
         if (plugin.getEconomyListener().getAllowed().contains(player.getUniqueId())) {
             Inventory reward = Bukkit.createInventory(null, InventoryType.DROPPER, "Claim your reward!");

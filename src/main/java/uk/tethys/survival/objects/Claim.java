@@ -277,13 +277,15 @@ public class Claim implements Serializable {
     }
 
     public static Optional<Claim> getClaim(Location location) throws SQLException {
-        try (ResultSet claim = Survival.INSTANCE.getDBConnection().prepareStatement(String.format(
-                "SELECT * FROM claims WHERE `world` = '%s' && ((`x1` <= %d && %d <= `x2`) && (`z1` <= %d && %d <= `z2`)) LIMIT 1",
-                Objects.requireNonNull(location.getWorld()).getUID().toString(),
-                location.getBlockX(),
-                location.getBlockX(),
-                location.getBlockZ(),
-                location.getBlockZ())).executeQuery()) {
+        ResultSet claim = null;
+        try (Connection connection = Survival.INSTANCE.getDBConnection()) {
+            claim = connection.prepareStatement(String.format(
+                    "SELECT * FROM claims WHERE `world` = '%s' && ((`x1` <= %d && %d <= `x2`) && (`z1` <= %d && %d <= `z2`)) LIMIT 1",
+                    Objects.requireNonNull(location.getWorld()).getUID().toString(),
+                    location.getBlockX(),
+                    location.getBlockX(),
+                    location.getBlockZ(),
+                    location.getBlockZ())).executeQuery();
             boolean inClaim = claim.next();
             if (inClaim)
                 return Optional.of(new Claim(
@@ -303,6 +305,8 @@ public class Claim implements Serializable {
                 ));
             else
                 return Optional.empty();
+        } finally {
+            if (claim != null) claim.close();
         }
     }
 

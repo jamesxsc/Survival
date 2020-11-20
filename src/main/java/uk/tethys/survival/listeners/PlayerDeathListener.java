@@ -31,6 +31,7 @@ public class PlayerDeathListener implements Listener {
 
             Optional<DeathManager.Death> d = Survival.INSTANCE.getDeathManager().getLatestDeath(player);
             if (d.isPresent()) {
+                System.out.println("clearing old grave");
                 // default to summoning grave, clearing old death.
                 Survival.INSTANCE.getDeathManager().summonGrave(player);
                 Survival.INSTANCE.getDeathManager().getDeaths().remove(d.get());

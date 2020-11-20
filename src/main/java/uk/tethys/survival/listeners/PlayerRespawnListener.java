@@ -154,6 +154,9 @@ public class PlayerRespawnListener implements Listener {
         if (!block.hasMetadata("is_grave") || !block.getMetadata("is_grave").get(0).asBoolean())
             return;
 
+        System.out.println("is grave");
+        event.setCancelled(true);
+
         // at this point we are fairly certain the player has right clicked a grave with their main hand
         // todo generify to avoid using get(0)
         UUID graveOwner = (UUID) block.getMetadata("grave_owner").get(0).value();
@@ -168,7 +171,7 @@ public class PlayerRespawnListener implements Listener {
             player.setTotalExperience(exp);
 
             Inventory reclaim = Bukkit.createInventory(null, 36, "Reclaim Items");
-            reclaim.setContents((ItemStack[]) Stream.concat(Arrays.stream(contents), Arrays.stream(armor)).toArray());
+            reclaim.setContents(Stream.concat(Arrays.stream(contents), Arrays.stream(armor)).toArray(ItemStack[]::new));
             player.openInventory(reclaim);
         } else {
             // todo NOT YOUR GRAVE!

@@ -12,17 +12,13 @@
     </treeState>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="4ef5f5c2-ccfe-4fcd-80b0-241753096a4f" name="Default Changelist" comment="">
+    <list default="true" id="4ef5f5c2-ccfe-4fcd-80b0-241753096a4f" name="Default Changelist" comment="added some flags">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/uk/tethys/survival/Survival.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/uk/tethys/survival/Survival.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/uk/tethys/survival/commands/ClaimCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/uk/tethys/survival/commands/ClaimCommand.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/uk/tethys/survival/item/CustomItems.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/uk/tethys/survival/item/CustomItems.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/uk/tethys/survival/listeners/EconomyListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/uk/tethys/survival/listeners/EconomyListener.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/uk/tethys/survival/commands/internal/DRCLCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/uk/tethys/survival/commands/internal/DRCLCommand.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/uk/tethys/survival/listeners/PlayerDeathListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/uk/tethys/survival/listeners/PlayerDeathListener.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/uk/tethys/survival/listeners/PlayerRespawnListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/uk/tethys/survival/listeners/PlayerRespawnListener.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/uk/tethys/survival/managers/DeathManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/uk/tethys/survival/managers/DeathManager.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/mysql.sql" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/mysql.sql" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/uk/tethys/survival/objects/Claim.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/uk/tethys/survival/objects/Claim.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -272,7 +268,14 @@
       <option name="project" value="LOCAL" />
       <updated>1605107274262</updated>
     </task>
-    <option name="localTasksCounter" value="16" />
+    <task id="LOCAL-00016" summary="added some flags">
+      <created>1605732125789</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1605732125789</updated>
+    </task>
+    <option name="localTasksCounter" value="17" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -296,11 +299,11 @@
     <option name="LAST_COMMIT_MESSAGE" value="added some flags" />
   </component>
   <component name="WindowStateProjectService">
-    <state x="718" y="168" key="#com.intellij.ide.util.MemberChooser" timestamp="1605724724099">
+    <state x="718" y="168" key="#com.intellij.ide.util.MemberChooser" timestamp="1605861509874">
       <screen x="0" y="0" width="1920" height="1160" />
     </state>
     <state x="574" y="119" key="#com.intellij.ide.util.MemberChooser/0.0.1536.824@0.0.1536.824" timestamp="1605625458726" />
-    <state x="718" y="168" key="#com.intellij.ide.util.MemberChooser/1920.-339.1200.1880/-1920.337.1920.1040/0.0.1920.1160@0.0.1920.1160" timestamp="1605724724099" />
+    <state x="718" y="168" key="#com.intellij.ide.util.MemberChooser/1920.-339.1200.1880/-1920.337.1920.1040/0.0.1920.1160@0.0.1920.1160" timestamp="1605861509874" />
     <state x="671" y="381" key="#com.intellij.refactoring.move.moveMembers.MoveMembersDialog" timestamp="1597614627347">
       <screen x="0" y="0" width="1920" height="1160" />
     </state>
@@ -309,42 +312,44 @@
       <screen x="0" y="0" width="1536" height="824" />
     </state>
     <state x="52" y="0" key="#com.intellij.refactoring.rename.AutomaticRenamingDialog/0.0.1536.824@0.0.1536.824" timestamp="1605534275311" />
-    <state x="468" y="0" key="CommitChangelistDialog2" timestamp="1605107272707">
-      <screen x="0" y="0" width="1536" height="824" />
+    <state x="585" y="0" key="CommitChangelistDialog2" timestamp="1605861475219">
+      <screen x="0" y="0" width="1920" height="1160" />
     </state>
     <state x="-1335" y="809" key="CommitChangelistDialog2/0.0.1200.1880/-1920.676.1920.1040@-1920.676.1920.1040" timestamp="1597673400984" />
     <state x="468" y="0" key="CommitChangelistDialog2/0.0.1536.824@0.0.1536.824" timestamp="1605107272707" />
     <state x="585" y="148" key="CommitChangelistDialog2/0.0.1920.1160/1920.-339.1200.1880/-1920.337.1920.1040@0.0.1920.1160" timestamp="1597755542838" />
+    <state x="585" y="0" key="CommitChangelistDialog2/1920.-339.1200.1880/-1920.337.1920.1040/0.0.1920.1160@0.0.1920.1160" timestamp="1605861475219" />
     <state x="549" y="167" key="FileChooserDialogImpl" timestamp="1604660287292">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
     <state x="549" y="167" key="FileChooserDialogImpl/0.0.1536.824@0.0.1536.824" timestamp="1604660287292" />
-    <state width="1877" height="213" key="GridCell.Tab.0.bottom" timestamp="1605731639267">
+    <state width="1877" height="213" key="GridCell.Tab.0.bottom" timestamp="1605863260351">
       <screen x="0" y="0" width="1920" height="1160" />
     </state>
     <state width="1877" height="186" key="GridCell.Tab.0.bottom/0.0.1200.1880/-1920.676.1920.1040@-1920.676.1920.1040" timestamp="1597673434447" />
-    <state width="1877" height="213" key="GridCell.Tab.0.bottom/1920.-339.1200.1880/-1920.337.1920.1040/0.0.1920.1160@0.0.1920.1160" timestamp="1605731639267" />
-    <state width="1877" height="213" key="GridCell.Tab.0.center" timestamp="1605731639267">
+    <state width="1877" height="213" key="GridCell.Tab.0.bottom/1920.-339.1200.1880/-1920.337.1920.1040/0.0.1920.1160@0.0.1920.1160" timestamp="1605863260351" />
+    <state width="1877" height="213" key="GridCell.Tab.0.center" timestamp="1605863260351">
       <screen x="0" y="0" width="1920" height="1160" />
     </state>
     <state width="1877" height="186" key="GridCell.Tab.0.center/0.0.1200.1880/-1920.676.1920.1040@-1920.676.1920.1040" timestamp="1597673434447" />
-    <state width="1877" height="213" key="GridCell.Tab.0.center/1920.-339.1200.1880/-1920.337.1920.1040/0.0.1920.1160@0.0.1920.1160" timestamp="1605731639267" />
-    <state width="1877" height="213" key="GridCell.Tab.0.left" timestamp="1605731639267">
+    <state width="1877" height="213" key="GridCell.Tab.0.center/1920.-339.1200.1880/-1920.337.1920.1040/0.0.1920.1160@0.0.1920.1160" timestamp="1605863260351" />
+    <state width="1877" height="213" key="GridCell.Tab.0.left" timestamp="1605863260351">
       <screen x="0" y="0" width="1920" height="1160" />
     </state>
     <state width="1877" height="186" key="GridCell.Tab.0.left/0.0.1200.1880/-1920.676.1920.1040@-1920.676.1920.1040" timestamp="1597673434446" />
-    <state width="1877" height="213" key="GridCell.Tab.0.left/1920.-339.1200.1880/-1920.337.1920.1040/0.0.1920.1160@0.0.1920.1160" timestamp="1605731639267" />
-    <state width="1877" height="213" key="GridCell.Tab.0.right" timestamp="1605731639267">
+    <state width="1877" height="213" key="GridCell.Tab.0.left/1920.-339.1200.1880/-1920.337.1920.1040/0.0.1920.1160@0.0.1920.1160" timestamp="1605863260351" />
+    <state width="1877" height="213" key="GridCell.Tab.0.right" timestamp="1605863260351">
       <screen x="0" y="0" width="1920" height="1160" />
     </state>
     <state width="1877" height="186" key="GridCell.Tab.0.right/0.0.1200.1880/-1920.676.1920.1040@-1920.676.1920.1040" timestamp="1597673434447" />
-    <state width="1877" height="213" key="GridCell.Tab.0.right/1920.-339.1200.1880/-1920.337.1920.1040/0.0.1920.1160@0.0.1920.1160" timestamp="1605731639267" />
-    <state x="442" y="222" key="Vcs.Push.Dialog.v2" timestamp="1605107276727">
-      <screen x="0" y="0" width="1536" height="824" />
+    <state width="1877" height="213" key="GridCell.Tab.0.right/1920.-339.1200.1880/-1920.337.1920.1040/0.0.1920.1160@0.0.1920.1160" timestamp="1605863260351" />
+    <state x="553" y="313" key="Vcs.Push.Dialog.v2" timestamp="1605732126866">
+      <screen x="0" y="0" width="1920" height="1160" />
     </state>
     <state x="-1368" y="957" key="Vcs.Push.Dialog.v2/0.0.1200.1880/-1920.676.1920.1040@-1920.676.1920.1040" timestamp="1597673426708" />
     <state x="442" y="222" key="Vcs.Push.Dialog.v2/0.0.1536.824@0.0.1536.824" timestamp="1605107276727" />
     <state x="552" y="313" key="Vcs.Push.Dialog.v2/0.0.1920.1160/1920.-339.1200.1880/-1920.337.1920.1040@0.0.1920.1160" timestamp="1597755545580" />
+    <state x="553" y="313" key="Vcs.Push.Dialog.v2/1920.-339.1200.1880/-1920.337.1920.1040/0.0.1920.1160@0.0.1920.1160" timestamp="1605732126866" />
     <state x="499" y="173" key="extract.method.dialog" timestamp="1605176148639">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
@@ -353,12 +358,12 @@
       <screen x="0" y="0" width="1536" height="824" />
     </state>
     <state x="425" y="187" key="run.anything.popup/0.0.1536.824@0.0.1536.824" timestamp="1605534544364" />
-    <state x="690" y="269" width="672" height="420" key="search.everywhere.popup" timestamp="1605725064600">
+    <state x="690" y="269" width="672" height="420" key="search.everywhere.popup" timestamp="1605862881014">
       <screen x="0" y="0" width="1920" height="1160" />
     </state>
     <state x="552" y="191" width="672" height="299" key="search.everywhere.popup/0.0.1536.824@0.0.1536.824" timestamp="1605722582270" />
     <state x="690" y="269" width="672" height="420" key="search.everywhere.popup/0.0.1920.1160/1920.-339.1200.1880/-1920.337.1920.1040@0.0.1920.1160" timestamp="1597755351223" />
-    <state x="690" y="269" width="672" height="420" key="search.everywhere.popup/1920.-339.1200.1880/-1920.337.1920.1040/0.0.1920.1160@0.0.1920.1160" timestamp="1605725064600" />
+    <state x="690" y="269" width="672" height="420" key="search.everywhere.popup/1920.-339.1200.1880/-1920.337.1920.1040/0.0.1920.1160@0.0.1920.1160" timestamp="1605862881014" />
   </component>
   <component name="mavenExecuteGoalHistory">
     <option value="$PROJECT_DIR$" />
