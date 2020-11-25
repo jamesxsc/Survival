@@ -87,6 +87,7 @@ public class Survival extends JavaPlugin {
         // todo TEMP
         Bukkit.getScheduler().runTaskTimer(this, new BuildersWandItem.PreviewTask(), 200, 0);
         Bukkit.getScheduler().runTaskTimer(this, new DamageInternalEntityListener.KillTask(), 1000, 0);
+        Bukkit.getScheduler().runTaskTimer(this, new BreakInternalBlockListener.DestroyTask(), 1000, 0);
     }
 
     @Override

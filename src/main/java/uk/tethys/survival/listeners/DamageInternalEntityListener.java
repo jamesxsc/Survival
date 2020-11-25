@@ -14,9 +14,11 @@ import uk.tethys.survival.Survival;
 public class DamageInternalEntityListener implements Listener {
 
     public static NamespacedKey INTERNAL_ENTITY;
+    private final Survival plugin;
 
-    public DamageInternalEntityListener(Survival survival) {
-        INTERNAL_ENTITY = new NamespacedKey(survival, "DELETE_AFTER");
+    public DamageInternalEntityListener(Survival plugin) {
+        INTERNAL_ENTITY = new NamespacedKey(plugin, "DELETE_AFTER");
+        this.plugin = plugin;
     }
 
     @EventHandler
