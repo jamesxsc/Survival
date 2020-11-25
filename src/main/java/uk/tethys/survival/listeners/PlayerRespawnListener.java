@@ -162,7 +162,7 @@ public class PlayerRespawnListener implements Listener {
             block.setType(Material.AIR);
             player.setTotalExperience(exp);
 
-            Inventory reclaim = Bukkit.createInventory(null, 36, "Reclaim Items");
+            Inventory reclaim = Bukkit.createInventory(null, 45, "Reclaim Items");
             reclaim.setContents(Stream.concat(Arrays.stream(contents), Arrays.stream(armor)).toArray(ItemStack[]::new));
             player.openInventory(reclaim);
         } else {
